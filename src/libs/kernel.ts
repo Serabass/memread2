@@ -41,16 +41,20 @@ function arrToStr(a) {
         .join('');
 }
 
-
-/**
- * Needed:
- *  CreateToolhelp32Snapshot
- *  Process32First
- *  Process32Next
- */
+export const PROCESS_ALL_ACCESS = 0x1fffff;
 
 @Library({libPath: 'kernel32'})
 export class Kernel {
+
+    private static singleton: Kernel;
+
+    public static get instance() {
+        if (!this.singleton) {
+            this.singleton = new Kernel();
+        }
+
+        return this.singleton;
+    }
 
     @Method({types: ['bool', ['int', 'int', 'pointer', 'int', 'int']]})
     public ReadProcessMemory(hProcess: number,
@@ -62,7 +66,7 @@ export class Kernel {
     }
 
     @Method({types: ['int', ['int', 'bool', 'int']]})
-    public OpenProcess(processAccess: number, bInheritHandle: boolean, processId: number) {
+    public OpenProcess(processAccess: number, bInheritHandle: boolean, processId: number): number {
         return never();
     }
 
@@ -95,8 +99,6 @@ export class Kernel {
         let pEntry = new PROCESSENTRY32();
         pEntry.dwSize = PROCESSENTRY32.size;
         let snapshot = this.CreateToolhelp32Snapshot(0x00000002, null);
-        expect(typeof snapshot).toBe('number');
-        expect(snapshot).toBeGreaterThan(0);
         let proc = this.Process32First(snapshot, pEntry.ref());
 
         do {

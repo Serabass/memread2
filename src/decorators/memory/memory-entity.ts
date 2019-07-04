@@ -26,14 +26,13 @@ export default function MemoryEntity(): ClassDecorator {
                         case 'object':
                             if (type instanceof MemoryArrayPointer) {
                                 // WRONG
-                                let result = [];
+                                let result: any[] = [];
                                 let p = this.baseAddress + offset;
                                 let addr = Game.instance.read(p, 'int');
 
-                                debugger;
                                 let i = 0;
                                 while (addr !== 0) {
-                                    result.push(new (type.cls as any)(addr));
+                                    result.push(new (type.cls as any)(addr as any) as any);
                                     p += 4;
                                     addr = Game.instance.read(p, 'int');
                                 }
