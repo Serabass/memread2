@@ -1,13 +1,11 @@
+import MemoryEntity from '../decorators/memory/memory-entity';
 import Prop from '../decorators/memory/prop';
 import {Entity} from './entity';
 import Game from './game';
-import MemoryEntity from '../decorators/memory/memory-entity';
 
 @MemoryEntity()
 export class Vehicle extends Entity {
-
-    @Prop(0x354, 'float')
-    public health: number;
+    @Prop.float(0x354) public health: number;
 
     // @Prop(0x1CC, 'byte')
     // public numPassengers: number;

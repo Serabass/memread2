@@ -1,9 +1,7 @@
-import {Kernel, PROCESSENTRY32} from "../src/libs/kernel";
-import ffi from 'ffi';
+import Game from "../src/entities/game";
 
 describe('lib test', () => {
     it('x', () => {
-        const myLib = new Kernel();
-        expect(myLib.getProcessId('gta-vc.exe')).toBeGreaterThan(0);
+        expect(Game.instance.vehicles.length).toBe(0);
     });
 });

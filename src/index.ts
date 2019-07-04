@@ -1,8 +1,7 @@
 import Game from "./entities/game";
 
 let instance = Game.instance;
-debugger;
-let a = instance.minute;
+let a = instance.player.ped.wanted.visible;
 debugger;
 /*
 let proc = myLib.OpenProcess(0x001F0FFF, false, 224);

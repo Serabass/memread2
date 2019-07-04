@@ -46,22 +46,21 @@ export const PROCESS_ALL_ACCESS = 0x1fffff;
 @Library({libPath: 'kernel32'})
 export class Kernel {
 
-    private static singleton: Kernel;
-
-    public static get instance() {
-        if (!this.singleton) {
-            this.singleton = new Kernel();
-        }
-
-        return this.singleton;
-    }
-
     @Method({types: ['bool', ['int', 'int', 'pointer', 'int', 'int']]})
     public ReadProcessMemory(hProcess: number,
                              lpBaseAddress: number,
                              lpBuffer: Buffer,
                              dwSize: number,
                              lpNumberOfBytesRead: any): number {
+        return never();
+    }
+
+    @Method({types: ['bool', ['int', 'int', 'pointer', 'int', 'int']]})
+    public WriteProcessMemory(hProcess: number,
+                              lpBaseAddress: number,
+                              lpBuffer: Buffer,
+                              dwSize: number,
+                              lpNumberOfBytesRead: any): number {
         return never();
     }
 
@@ -95,21 +94,23 @@ export class Kernel {
         return never();
     }
 
-    public getProcessId(exeName: string) {
-        let pEntry = new PROCESSENTRY32();
-        pEntry.dwSize = PROCESSENTRY32.size;
-        let snapshot = this.CreateToolhelp32Snapshot(0x00000002, null);
-        let proc = this.Process32First(snapshot, pEntry.ref());
-
-        do {
-            let exe = arrToStr(pEntry.szExeFile);
-            if (exe === exeName) {
-                return pEntry.th32ProcessID;
-            }
-            pEntry = new PROCESSENTRY32();
-            pEntry.dwSize = PROCESSENTRY32.size;
-            proc = this.Process32Next(snapshot, pEntry.ref());
-        } while (proc);
-
-    }
 }
+
+export function getProcessId(exeName: string) {
+    let pEntry = new PROCESSENTRY32();
+    pEntry.dwSize = PROCESSENTRY32.size;
+    let snapshot = kernel.CreateToolhelp32Snapshot(0x00000002, null);
+    let proc = kernel.Process32First(snapshot, pEntry.ref());
+
+    do {
+        let exe = arrToStr(pEntry.szExeFile);
+        if (exe === exeName) {
+            return pEntry.th32ProcessID;
+        }
+        pEntry = new PROCESSENTRY32();
+        pEntry.dwSize = PROCESSENTRY32.size;
+        proc = kernel.Process32Next(snapshot, pEntry.ref());
+    } while (proc);
+}
+
+export const kernel = new Kernel();

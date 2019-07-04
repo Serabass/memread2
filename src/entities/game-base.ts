@@ -1,4 +1,3 @@
-import {Kernel} from "../libs/kernel";
 import {Process} from "./Process";
 import {Vehicle} from './vehicle';
 import {Entity} from './entity';
