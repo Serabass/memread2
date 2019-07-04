@@ -1,8 +1,12 @@
 import Game from "./entities/game";
 
 let instance = Game.instance;
-let a = instance.player.ped.wanted.visible;
-debugger;
+
+setInterval(() => {
+    instance.player.ped.nearestPeds.forEach(ped => {
+        ped.health = 0;
+    });
+}, 1000);
 /*
 let proc = myLib.OpenProcess(0x001F0FFF, false, 224);
 let pointer = ref.alloc('pointer');

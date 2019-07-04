@@ -44,4 +44,8 @@ export class Process {
         kernel.ReadProcessMemory(this.handle, address, buf, type.size, 0);
         return buf.readFloatLE(0);
     }
+
+    public write(address: number, buffer: Buffer) {
+        kernel.WriteProcessMemory(this.handle, address, buffer, buffer.length, 0);
+    }
 }

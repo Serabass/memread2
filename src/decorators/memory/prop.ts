@@ -8,6 +8,13 @@ export default function Prop(offset: number, type: DATATYPE = null): PropertyDec
         let k = Reflect.getMetadataKeys(target);
         let k2 = Reflect.getMetadataKeys(target, 'props');
 
+        if (!type) {
+            let designType = Reflect.getMetadata('design:type', target, propKey);
+            if (designType) {
+                type = designType;
+            }
+        }
+
         if (!props) {
             props = {};
         }

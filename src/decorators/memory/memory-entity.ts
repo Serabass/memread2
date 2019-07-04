@@ -50,8 +50,9 @@ export default function MemoryEntity(): ClassDecorator {
                     }
                     // return Game.instance.read();
                 },
-                set() {
-                    debugger;
+                set(value) {
+                    let {offset, type} = prop;
+                    Game.instance.write(this.baseAddress + offset, type, value);
                 },
             });
         });

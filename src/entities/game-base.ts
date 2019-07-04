@@ -29,24 +29,32 @@ export abstract class GameBase extends Entity {
         return this.read(addr, type);
     }
 
-    // public write(address: number, type: string, value: any) {
-    //     switch (type) {
-    //         case 'byte':
-    //             let byteMemBuffer: Buffer = new Buffer([]);
-    //             byteMemBuffer.writeInt8(value, 0);
-    //             return this.process.writeMemory(address, byteMemBuffer);
-    //         case 'short':
-    //             let shortMemBuffer: Buffer = new Buffer([]);
-    //             shortMemBuffer.writeInt16BE(value, 0);
-    //             return this.process.writeMemory(address, shortMemBuffer);
-    //         case 'int':
-    //             let intMemBuffer: Buffer = new Buffer([]);
-    //             intMemBuffer.writeInt16BE(value, 0);
-    //             return this.process.writeMemory(address, intMemBuffer);
-    //         default:
-    //             debugger;
-    //     }
-    // }
+    public write(address: number, type: string, value: any) {
+        let buffer: Buffer;
+
+        switch (type) {
+            case 'byte':
+                buffer = Buffer.alloc(1);
+                buffer.writeInt8(value, 0);
+                break;
+            case 'short':
+                buffer = Buffer.alloc(2);
+                buffer.writeInt16LE(value, 0);
+                break;
+            case 'int':
+                buffer = Buffer.alloc(4);
+                buffer.writeInt32LE(value, 0);
+                break;
+            case 'float':
+                buffer = Buffer.alloc(4);
+                buffer.writeFloatLE(value, 0);
+                break;
+            default:
+                return;
+        }
+
+        return this.process.write(address, buffer);
+    }
 
     public get vehicles(): Vehicle[] {
         let result: Vehicle[] = [];
