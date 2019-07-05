@@ -20,5 +20,4 @@ export class Vehicle extends Entity {
     constructor(protected baseAddress: number) {
         super(baseAddress);
     }
-
 }

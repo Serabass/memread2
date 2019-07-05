@@ -7,12 +7,12 @@ export class Process {
     public constructor(private pid: number) {
     }
 
-    public open(): this {
+    public open() {
         this.handle = kernel.OpenProcess(PROCESS_ALL_ACCESS, false, this.pid);
         return this;
     }
 
-    public close(): this {
+    public close() {
         kernel.CloseHandle(this.handle);
         return this;
     }

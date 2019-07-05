@@ -15,6 +15,16 @@ export class AllocationInfo {
         this.buffer = Buffer.alloc(size);
     }
 
+    public uInt8(value: number) {
+        this.buffer.writeUInt8(value, this.incOffset());
+        return this;
+    }
+
+    public int32(value: number) {
+        this.buffer.writeInt32LE(value, this.incOffset());
+        return this;
+    }
+
     public calculateOffset(step: number, fn: number) {
         return -(this.address - fn + step) - 5;
     }
@@ -22,6 +32,13 @@ export class AllocationInfo {
     public pushInt32(value: number) {
         this.buffer.writeUInt8(0x68, this.incOffset());
         this.buffer.writeInt32LE(value, this.incOffset(4));
+
+        return this;
+    }
+
+    public pushUInt8(value: number) {
+        this.buffer.writeUInt8(0x6A, this.incOffset());
+        this.buffer.writeUInt8(value, this.incOffset());
 
         return this;
     }

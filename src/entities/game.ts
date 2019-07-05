@@ -80,4 +80,18 @@ export default class Game extends GameBase {
         }
         return new Vehicle(res as number);
     }
+
+    public blowUpVehicle(addr: number) {
+        let inj = new Injector(this.process);
+        let alloc = inj.alloc(100)
+            .uInt8(0xB9).int32(addr)
+            .uInt8(0x8B).uInt8(0x39)
+            .pushUInt8(0x00)
+            .relativeCall(FunctionAddress.BLOWUP_VEHICLE)
+            .ret()
+        ;
+        this.writeAlloc(alloc);
+        let aa = Buffer.alloc(5);
+        kernel.CreateRemoteThread(this.process.handle, null, 0, alloc.address, alloc.address, 0, aa);
+    }
 }
