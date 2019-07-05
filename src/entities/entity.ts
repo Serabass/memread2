@@ -1,4 +1,8 @@
+import Prop from "../decorators/memory/prop";
+
 export class Entity {
+    @Prop.ubyte(0x5C) public modelIndex: number;
+
     constructor(protected baseAddress: number) {
 
     }

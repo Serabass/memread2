@@ -1,4 +1,4 @@
-import {kernel, Kernel, PROCESS_ALL_ACCESS} from "../libs/kernel";
+import {kernel, PROCESS_ALL_ACCESS} from "../libs/kernel";
 import ref from 'ref';
 
 export class Process {
@@ -22,6 +22,13 @@ export class Process {
         let buf = ref.alloc(type);
         kernel.ReadProcessMemory(this.handle, address, buf, type.size, 0);
         return buf.readInt8(0);
+    }
+
+    public readUByte(address: number) {
+        let type = ref.types.int8;
+        let buf = ref.alloc(type);
+        kernel.ReadProcessMemory(this.handle, address, buf, type.size, 0);
+        return buf.readUInt8(0);
     }
 
     public readShort(address: number) {

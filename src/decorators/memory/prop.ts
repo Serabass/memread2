@@ -26,7 +26,8 @@ export default function Prop(offset: number, type: DATATYPE = null): PropertyDec
 
 Prop.int = (offset: number) => Prop(offset, 'int');
 Prop.float = (offset: number) => Prop(offset, 'float');
-Prop.byte = (offset: number) => Prop(offset, 'int');
+Prop.ubyte = (offset: number) => Prop(offset, 'ubyte');
+Prop.byte = (offset: number) => Prop(offset, 'byte');
 Prop.short = (offset: number) => Prop(offset, 'short');
 Prop.bool = (offset: number) => Prop(offset, 'bool');
 Prop.array = (offset: number, Type: any) => Prop(offset, MemoryArrayPointer.of(Type));

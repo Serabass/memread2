@@ -2,7 +2,8 @@ import Game from "./entities/game";
 let instance = Game.instance;
 
 setInterval(() => {
-    instance.spawnVehicle(206);
+    let m206 = instance.spawnVehicle(130);
+    console.log(m206.modelIndex);
 }, 1000);
 
 /*

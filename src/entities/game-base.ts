@@ -1,3 +1,4 @@
+import {AllocationInfo} from "../injector";
 import {Process} from "./Process";
 import {Vehicle} from './vehicle';
 import {Entity} from './entity';
@@ -14,6 +15,8 @@ export abstract class GameBase extends Entity {
                 return !!this.process.readByte(address);
             case 'byte':
                 return this.process.readByte(address);
+            case 'ubyte':
+                return this.process.readUByte(address);
             case 'short':
                 return this.process.readShort(address);
             case 'int':
@@ -64,6 +67,18 @@ export abstract class GameBase extends Entity {
         }
 
         return this.process.write(address, buffer);
+    }
+
+    public writeBuffer(buffer: Buffer, address: number) {
+        buffer.forEach((b, i) => {
+            this.write(address + i, 'ubyte', b);
+        });
+    }
+
+    public writeAlloc(alloc: AllocationInfo) {
+        alloc.buffer.forEach((b, i) => {
+            this.write(alloc.address + i, 'ubyte', b);
+        });
     }
 
     public get vehicles(): Vehicle[] {
