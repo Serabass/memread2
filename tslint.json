@@ -10,7 +10,9 @@
         "no-console": false,
         "prefer-const": false,
         "no-empty": false,
-        "ordered-imports": false
+        "ordered-imports": false,
+        "max-classes-per-file": false,
+        "no-bitwise": false
     },
     "rulesDirectory": []
 }

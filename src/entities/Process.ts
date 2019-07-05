@@ -2,7 +2,7 @@ import {kernel, Kernel, PROCESS_ALL_ACCESS} from "../libs/kernel";
 import ref from 'ref';
 
 export class Process {
-    private handle: number;
+    public handle: number;
 
     public constructor(private pid: number) {
     }

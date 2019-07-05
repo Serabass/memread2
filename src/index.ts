@@ -1,10 +1,10 @@
 import Game from "./entities/game";
-
 let instance = Game.instance;
 
 setInterval(() => {
-    console.log(instance.player.ped.isInVehicle);
+    instance.spawnVehicle(206);
 }, 1000);
+
 /*
 let proc = myLib.OpenProcess(0x001F0FFF, false, 224);
 let pointer = ref.alloc('pointer');

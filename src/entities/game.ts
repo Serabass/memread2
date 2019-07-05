@@ -1,6 +1,7 @@
 import MemoryEntity from '../decorators/memory/memory-entity';
 import Prop from '../decorators/memory/prop';
-import {getProcessId} from "../libs/kernel";
+import {Injector} from "../injector";
+import {getProcessId, kernel} from "../libs/kernel";
 import Cheat from "./cheat";
 import {GameBase} from './game-base';
 import {Player} from './player';
@@ -38,6 +39,32 @@ export default class Game extends GameBase {
     @Prop.float(0x00686FC8) public carDensity: number;
     @Prop.float(0x0068F5F0) public gravity: number;
     @Prop.float(0x0097F264) public timeScale: number;
+
+    public spawnVehicle(modelIndex: number) {
+        let inj = new Injector(this.process);
+        let alloc = inj.alloc(18);
+        let spawnVehicleFn = 0x4AE8F0;
+        let buf = Buffer.alloc(18);
+        inj.alloc(100);
+        let resultAlloc = inj.alloc(4);
+        buf.writeUInt8(0x68, 0); // +1 push
+        buf.writeInt32LE(modelIndex, 1); // +4 modelIndex
+        buf.writeUInt8(0xE8, 5); // relative call
+        let offset = -(alloc.address - spawnVehicleFn + 5) - 5;
+        buf.writeInt32LE(offset, 6); // fnAddr
+        buf.writeUInt8(0x89, 10);
+        buf.writeUInt8(0x0D, 11); // mov DWORD PTR ds:result
+        buf.writeInt32LE(resultAlloc.address, 12);
+        buf.writeUInt8(0x59, 16); // pop ecx
+        buf.writeUInt8(0xC3, 17); // ret
+        buf.forEach((b, i) => {
+            this.write(alloc.address + i, 'ubyte', b);
+        });
+        debugger;
+        let aa = Buffer.alloc(5);
+        let a = kernel.CreateRemoteThread(this.process.handle, null, 0, alloc.address, alloc.address, 0, aa);
+        debugger;
+    }
 
     protected constructor(protected baseAddress: number = 0x0) {
         super(baseAddress);

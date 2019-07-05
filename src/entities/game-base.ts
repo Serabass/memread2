@@ -43,6 +43,10 @@ export abstract class GameBase extends Entity {
                 buffer = Buffer.alloc(1);
                 buffer.writeInt8(value, 0);
                 break;
+            case 'ubyte':
+                buffer = Buffer.alloc(1);
+                buffer.writeUInt8(value, 0);
+                break;
             case 'short':
                 buffer = Buffer.alloc(2);
                 buffer.writeInt16LE(value, 0);

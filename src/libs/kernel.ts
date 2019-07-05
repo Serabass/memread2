@@ -94,6 +94,17 @@ export class Kernel {
         return never();
     }
 
+    @Method({types: ['int', ['int', 'void *', 'ulong', 'uint', 'uint']]})
+    public VirtualAllocEx(hProcess, lpAddress, dwSize, flAllocationType, flProtect) {
+        return never();
+    }
+
+    @Method({types: ['int', ['int', 'int', 'ulong', 'uint', 'int', 'uint', 'uint *']]})
+    public CreateRemoteThread(hProcess, lpThreadAttributes, dwStackSize,
+                              lpStartAddress, lpParameter, dwCreationFlags, lpThreadId) {
+        return never();
+    }
+
 }
 
 export function getProcessId(exeName: string) {
