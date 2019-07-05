@@ -3,9 +3,7 @@ import Game from "./entities/game";
 let instance = Game.instance;
 
 setInterval(() => {
-    instance.player.ped.nearestPeds.forEach(ped => {
-        ped.health = 0;
-    });
+    console.log(instance.player.ped.isInVehicle);
 }, 1000);
 /*
 let proc = myLib.OpenProcess(0x001F0FFF, false, 224);

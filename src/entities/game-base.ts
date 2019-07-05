@@ -10,6 +10,8 @@ export abstract class GameBase extends Entity {
 
     public read(address: number, type: DATATYPE) {
         switch (type) {
+            case 'bool':
+                return !!this.process.readByte(address);
             case 'byte':
                 return this.process.readByte(address);
             case 'short':
@@ -25,7 +27,7 @@ export abstract class GameBase extends Entity {
     }
 
     public readPointer(address: number, type: DATATYPE) {
-        let addr = this.read(address, 'int');
+        let addr = +this.read(address, 'int');
         return this.read(addr, type);
     }
 
@@ -33,6 +35,10 @@ export abstract class GameBase extends Entity {
         let buffer: Buffer;
 
         switch (type) {
+            case 'bool':
+                buffer = Buffer.alloc(1);
+                buffer.writeInt8(+value, 0);
+                break;
             case 'byte':
                 buffer = Buffer.alloc(1);
                 buffer.writeInt8(value, 0);
@@ -59,12 +65,12 @@ export abstract class GameBase extends Entity {
     public get vehicles(): Vehicle[] {
         let result: Vehicle[] = [];
         let addr = VEHICLES_ADDR;
-        let entity = this.read(addr, 'int');
+        let entity = +this.read(addr, 'int');
 
         while (entity !== 0) {
             result.push(new Vehicle(entity));
             addr += 4;
-            entity = this.readPointer(addr, 'int');
+            entity = +this.readPointer(addr, 'int');
         }
 
         return result;
