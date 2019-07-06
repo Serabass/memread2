@@ -29,8 +29,8 @@ export default function MemoryEntity(): ClassDecorator {
                                 let result: any[] = [];
                                 let p = this.baseAddress + offset;
                                 let addr = Game.instance.read(p, 'int');
-
                                 let i = 0;
+
                                 while (addr !== 0) {
                                     result.push(new (type.cls as any)(addr as any) as any);
                                     p += 4;

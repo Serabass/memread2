@@ -3,13 +3,13 @@ import MemoryEntity from '../decorators/memory/memory-entity';
 
 import Prop from '../decorators/memory/prop';
 import {RemoteFunction} from '../decorators/memory/remote-function';
-import {Entity} from './entity';
+import {Physical} from "./physical";
 import {Vector3d} from './vector-3d';
 import {Vehicle} from './vehicle';
 import {Wanted} from "./wanted";
 
 @MemoryEntity()
-export class Ped extends Entity {
+export class Ped extends Physical {
     @Prop(0x34, Vector3d)
     public position: Vector3d;
 
