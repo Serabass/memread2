@@ -1,10 +1,6 @@
 import 'reflect-metadata';
 import {MemoryEntity, Prop, RemoteFunction} from '../decorators';
-import {PedStatus} from "./ped-status";
-import {Physical} from "./physical";
-import {Vector3d} from './vector-3d';
-import {Vehicle} from './vehicle';
-import {Wanted} from "./wanted";
+import {PedStatus, Physical, Vector3d, Vehicle, Wanted} from "./";
 
 @MemoryEntity()
 export class Ped extends Physical {

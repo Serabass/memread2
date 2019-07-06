@@ -1,5 +1,5 @@
 import {MemoryEntity, Prop} from '../decorators';
-import {MODEL} from "./model";
+import {MODEL} from "./";
 
 @MemoryEntity()
 export class Police {

@@ -1,20 +1,16 @@
 import {MemoryEntity, Prop} from '../decorators';
 import {Injector} from "../injector";
 import {getProcessId, kernel} from "../libs";
-import {Process} from "../Process";
-import {FunctionAddress} from "./functions";
-import {GameBase} from './game-base';
-import {Player} from './player';
-import {Vehicle} from './vehicle';
+import {Process} from "../process";
+import {Cheat, FunctionAddress, GameBase, Player, Vehicle} from "./";
 
 @MemoryEntity()
 export class Game extends GameBase {
     public static SET_HELP_MESSAGE = 0x55BFC0;
     public static singleton: Game;
-    private static EXE: string = 'gta-vc.exe';
     @Prop.pointer(0x94AD28, Player) public player: Player;
 
-    // public cheat: Cheat = Cheat.instance;
+    public cheat: Cheat = Cheat.instance;
     @Prop.array(0x0094AD2C, Vehicle) public vehicles: Vehicle[];
     @Prop.int(0x000094ADC8) public money: number;
     @Prop.byte(0x000A10B6B) public hour: number;
@@ -30,15 +26,7 @@ export class Game extends GameBase {
 
     public static get instance() {
         if (!this.singleton) {
-            const processId = getProcessId(this.EXE);
 
-            if (!processId) {
-                throw new Error('Process not found');
-            }
-
-            this.singleton = new Game();
-            this.singleton.process = new Process(processId);
-            this.singleton.process.open();
         }
 
         return this.singleton;
@@ -88,13 +76,13 @@ export class Game extends GameBase {
         // buf.writeUInt8(0x59, 16); // pop ecx
         // buf.writeUInt8(0xC3, 17); // ret
 
-        this.writeAlloc(alloc);
+        this.process.writeAlloc(alloc);
 
         let aa = Buffer.alloc(5);
         kernel.CreateRemoteThread(this.process.handle, null,
             0, alloc.address, alloc.address, 0, aa);
-        let res = this.read(resultAlloc.address, 'int');
-        let res2 = this.read(res as number, 'int');
+        let res = this.process.read(resultAlloc.address, 'int');
+        let res2 = this.process.read(res as number, 'int');
 
         if (typeof res !== 'number') {
             throw new Error();
@@ -111,9 +99,7 @@ export class Game extends GameBase {
             .relativeCall(FunctionAddress.BLOWUP_VEHICLE)
             .ret()
         ;
-        this.writeAlloc(alloc);
-
-        debugger;
+        this.process.writeAlloc(alloc);
 
         let aa = Buffer.alloc(5);
         kernel.CreateRemoteThread(this.process.handle, null,
@@ -138,18 +124,15 @@ export class Game extends GameBase {
                 .ret()
         ;
 
-        this.writeAlloc(alloc);
-
-        debugger;
+        this.process.writeAlloc(alloc);
 
         let aa = Buffer.alloc(5);
         kernel.CreateRemoteThread(this.process.handle, null,
             0, alloc.address, alloc.address, 0, aa);
-        let res = this.read(resultAlloc.address, 'int');
-        let res2 = this.read(res as number, 'int');
+        let res = this.process.read(resultAlloc.address, 'int');
+        let res2 = this.process.read(res as number, 'int');
 
         if (typeof res !== 'number') {
-            debugger;
             throw new Error();
         }
         return new Vehicle(res as number);

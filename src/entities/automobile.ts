@@ -1,5 +1,5 @@
 import {MemoryEntity} from "../decorators/memory";
-import {Vehicle} from "./vehicle";
+import {Vehicle} from "./";
 
 @MemoryEntity()
 export class Automobile extends Vehicle {

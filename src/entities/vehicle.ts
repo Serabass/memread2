@@ -1,8 +1,5 @@
 import {MemoryEntity, Prop} from '../decorators';
-import {Entity} from './entity';
-import {Game} from './game';
-import {Ped} from "./ped";
-import {RadioStation} from "./radio-station";
+import {Entity, Game, Ped, RadioStation} from './';
 
 @MemoryEntity()
 export class Vehicle extends Entity {

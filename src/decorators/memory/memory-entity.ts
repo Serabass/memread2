@@ -1,8 +1,6 @@
 // https://stackoverflow.com/questions/28795242/injecting-only-function-and-running-it-through-createremotethread-c
 // http://www.cyberforum.ru/csharp-beginners/thread1974282.html
-
 import 'reflect-metadata';
-import {Game} from '../../entities/game';
 import {MemoryArrayPointer, MemoryPointer} from '../../pointer';
 
 export function MemoryEntity(): ClassDecorator {
@@ -17,6 +15,7 @@ export function MemoryEntity(): ClassDecorator {
             let prop = props[key];
             Object.defineProperty(target.prototype, key, {
                 get() {
+                    let {Game} = require('../../entities/game');
                     let baseAddress = this.baseAddress || 0x0;
                     let {offset, type} = prop;
                     switch (typeof type) {
@@ -57,6 +56,7 @@ export function MemoryEntity(): ClassDecorator {
                     // return Game.instance.read();
                 },
                 set(value) {
+                    let {Game} = require('../../entities/game');
                     let {offset, type} = prop;
                     Game.instance.write(this.baseAddress + offset, type, value);
                 },

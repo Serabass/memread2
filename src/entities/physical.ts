@@ -1,7 +1,6 @@
 import 'reflect-metadata';
 import {MemoryEntity, Prop} from '../decorators';
-import {Entity} from './entity';
-import {Vector3d} from "./vector-3d";
+import {Entity, Vector3d} from './';
 
 @MemoryEntity()
 export class Physical extends Entity {

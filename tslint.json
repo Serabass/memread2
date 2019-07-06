@@ -12,7 +12,8 @@
         "no-empty": false,
         "ordered-imports": false,
         "max-classes-per-file": false,
-        "no-bitwise": false
+        "no-bitwise": false,
+        "no-debugger": false
     },
     "rulesDirectory": []
 }

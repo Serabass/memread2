@@ -1,9 +1,8 @@
-import {MemoryEntity} from "../decorators/memory";
-import Prop from "../decorators/memory/prop";
-import {Entity} from "./entity";
+import {MemoryEntity, Prop} from "../decorators/memory";
+import {Entity} from "./";
 
 @MemoryEntity()
-export default class Cheat extends Entity {
+export class Cheat extends Entity {
     public static singleton: Cheat;
     @Prop.bool(0x00A10ADC) public greenLights: boolean;
     @Prop.bool(0x00A10AB3) public weaponsForAll: boolean;
