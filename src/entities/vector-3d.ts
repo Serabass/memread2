@@ -1,6 +1,5 @@
-import Prop from '../decorators/memory/prop';
+import {MemoryEntity, Prop} from '../decorators';
 import {Entity} from './entity';
-import MemoryEntity from '../decorators/memory/memory-entity';
 
 @MemoryEntity()
 export class Vector3d extends Entity {

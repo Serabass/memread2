@@ -1,4 +1,4 @@
-import MemoryEntity from "../decorators/memory/memory-entity";
+import {MemoryEntity} from "../decorators/memory";
 import {Vehicle} from "./vehicle";
 
 @MemoryEntity()

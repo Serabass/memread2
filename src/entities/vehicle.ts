@@ -1,7 +1,6 @@
-import MemoryEntity from '../decorators/memory/memory-entity';
-import Prop from '../decorators/memory/prop';
+import {MemoryEntity, Prop} from '../decorators';
 import {Entity} from './entity';
-import Game from './game';
+import {Game} from './game';
 import {Ped} from "./ped";
 import {RadioStation} from "./radio-station";
 
@@ -22,8 +21,8 @@ export class Vehicle extends Entity {
     @Prop.int(0x1A4)
     public alarmDuration: number;
 
-    @Prop.pointer(0x1A8)
-    public driver: number;
+    @Prop.pointer(0x1A8, Ped)
+    public driver: Ped;
 
     @Prop.array(0x1AC, Ped)
     public passengers: Ped[];
@@ -43,11 +42,11 @@ export class Vehicle extends Entity {
     @Prop.float(0x354)
     public health: number;
 
-    public static get pool() {
-        return Game.instance.vehicles;
-    }
-
     constructor(public baseAddress: number) {
         super(baseAddress);
+    }
+
+    public static get pool() {
+        return Game.instance.vehicles;
     }
 }

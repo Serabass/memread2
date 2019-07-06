@@ -1,4 +1,4 @@
-import {Library, Method, never} from '../../vendor/ffi-decorators/src';
+import {Library, Method, never} from 'ffi-decorators';
 
 @Library({libPath: 'user32'})
 export class User32 {

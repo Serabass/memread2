@@ -1,5 +1,5 @@
-import {kernel, PROCESS_ALL_ACCESS} from "./libs/kernel";
 import ref from 'ref';
+import {kernel, PROCESS_ALL_ACCESS} from "./libs/kernel";
 
 export class Process {
     public handle: number;

@@ -1,6 +1,5 @@
 import 'reflect-metadata';
-import MemoryEntity from '../decorators/memory/memory-entity';
-import Prop from '../decorators/memory/prop';
+import {MemoryEntity, Prop} from '../decorators';
 import {Entity} from './entity';
 import {Vector3d} from "./vector-3d";
 

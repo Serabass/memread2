@@ -1,4 +1,4 @@
-import Prop from "../decorators/memory/prop";
+import {Prop} from "../decorators";
 import {MODEL} from "./model";
 
 export class Entity {

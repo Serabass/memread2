@@ -1,38 +1,21 @@
-import * as ffi from 'ffi';
-import {Library, Method} from "ffi-decorators";
-import {Kernel} from "./lib";
+import {Player} from "./entities/player";
+import {user32} from "./libs/user32";
 
-let types = ['bool', 'pointer', 'int', 'float', 'string'];
-
-for (let ret of types) {
-    for (let hProcess of types) {
-        for (let lpBaseAddress of types) {
-            for (let lpBuffer of types) {
-                for (let dwSize of types) {
-                    for (let lpNumberOfBytesRead of types) {
-                        let options = [ret, [hProcess, lpBaseAddress, lpBuffer, dwSize, lpNumberOfBytesRead]];
-                        try {
-
-                            let libm = ffi.Library('libm', {
-                                ceil: ['double', ['double']],
-                            });
-                            libm.ceil(1.5); // 2
-
-                            let ownPropertyDescriptor = Object
-                                .getOwnPropertyDescriptor(Kernel.prototype, 'ReadProcessMemory');
-                            Method({types: options as any})(Kernel.prototype, 'ReadProcessMemory', null as any);
-
-                            Library({libPath: 'user32'})(Kernel);
-                            const myLib = new Kernel();
-                            let res = myLib.ReadProcessMemory(1, 2, new Buffer(1), 4, 5,);
-
-                            debugger;
-                        } catch (e) {
-
-                        }
-                    }
-                }
-            }
-        }
+setInterval(() => {
+    Player.instance.health = 120;
+    if (user32.GetKeyState(9) < 0) {
+        Player.instance.wanted.chaosLevel += 50;
+        console.log(Player.instance.wanted.chaosLevel, Player.instance.wanted.visible);
     }
-}
+}, 500);
+
+/*
+let proc = myLib.OpenProcess(0x001F0FFF, false, 224);
+let pointer = ref.alloc('pointer');
+myLib.ReadProcessMemory(proc, 0x94ADC8, pointer, 4, 0);
+let r = pointer.readInt32BE(0);
+let r2 = pointer.readInt32LE(0);
+debugger;
+let res = myLib.CloseHandle(proc);
+debugger;
+*/

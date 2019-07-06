@@ -1,13 +1,27 @@
+import {DATATYPE} from '../datatype';
 import {AllocationInfo} from "../injector";
 import {Process} from "../Process";
-import {Vehicle} from './vehicle';
 import {Entity} from './entity';
-import {DATATYPE} from '../datatype';
+import {Vehicle} from './vehicle';
 
 const VEHICLES_ADDR = 0xA0FDE4;
 
 export abstract class GameBase extends Entity {
     public process: Process;
+
+    public get vehicles(): Vehicle[] {
+        let result: Vehicle[] = [];
+        let addr = VEHICLES_ADDR;
+        let entity = +this.read(addr, 'int');
+
+        while (entity !== 0) {
+            result.push(new Vehicle(entity));
+            addr += 4;
+            entity = +this.readPointer(addr, 'int');
+        }
+
+        return result;
+    }
 
     public read(address: number, type: DATATYPE) {
         switch (type) {
@@ -80,19 +94,5 @@ export abstract class GameBase extends Entity {
             let b = alloc.buffer[i];
             this.write(alloc.address + i, 'ubyte', b);
         }
-    }
-
-    public get vehicles(): Vehicle[] {
-        let result: Vehicle[] = [];
-        let addr = VEHICLES_ADDR;
-        let entity = +this.read(addr, 'int');
-
-        while (entity !== 0) {
-            result.push(new Vehicle(entity));
-            addr += 4;
-            entity = +this.readPointer(addr, 'int');
-        }
-
-        return result;
     }
 }

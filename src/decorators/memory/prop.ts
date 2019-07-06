@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import {DATATYPE} from '../../datatype';
 import {MemoryArrayPointer, MemoryPointer} from '../../pointer';
 
-export default function Prop(offset: number, type: DATATYPE = null): PropertyDecorator {
+export function Prop(offset: number, type: DATATYPE = null): PropertyDecorator {
     return (target: any, propKey: string | symbol): any => {
         let props = Reflect.getMetadata('props', target);
         let k = Reflect.getMetadataKeys(target);
@@ -31,7 +31,7 @@ Prop.byte = (offset: number) => Prop(offset, 'byte');
 Prop.short = (offset: number) => Prop(offset, 'short');
 Prop.bool = (offset: number) => Prop(offset, 'bool');
 Prop.array = (offset: number, Type: any) => Prop(offset, MemoryArrayPointer.of(Type));
-Prop.pointer = (offset: number, Type?: any) => {
+Prop.pointer = (offset: number, Type: any) => {
     return Prop(offset, MemoryPointer.from(Type));
 };
 Prop.sandbox = (t: any, p: any) => {

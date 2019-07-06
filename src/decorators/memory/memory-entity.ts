@@ -2,10 +2,10 @@
 // http://www.cyberforum.ru/csharp-beginners/thread1974282.html
 
 import 'reflect-metadata';
-import Game from '../../entities/game';
+import {Game} from '../../entities/game';
 import {MemoryArrayPointer, MemoryPointer} from '../../pointer';
 
-export default function MemoryEntity(): ClassDecorator {
+export function MemoryEntity(): ClassDecorator {
     return (target: any) => {
         let props = Reflect.getMetadata('props', target.prototype);
 
@@ -17,17 +17,18 @@ export default function MemoryEntity(): ClassDecorator {
             let prop = props[key];
             Object.defineProperty(target.prototype, key, {
                 get() {
+                    let baseAddress = this.baseAddress || 0x0;
                     let {offset, type} = prop;
                     switch (typeof type) {
                         case 'function':
-                            return new type(this.baseAddress + offset);
+                            return new type(baseAddress + offset);
                         case 'string':
-                            return Game.instance.read(this.baseAddress + offset, type);
+                            return Game.instance.read(baseAddress + offset, type);
                         case 'object':
                             if (type instanceof MemoryArrayPointer) {
                                 // WRONG
                                 let result: any[] = [];
-                                let p = this.baseAddress + offset;
+                                let p = baseAddress + offset;
                                 let addr = Game.instance.read(p, 'int');
                                 let i = 0;
 
@@ -39,7 +40,7 @@ export default function MemoryEntity(): ClassDecorator {
 
                                 return result;
                             } else if (type instanceof MemoryPointer) {
-                                let pointer = Game.instance.read(this.baseAddress + offset, 'int');
+                                let pointer = Game.instance.read(baseAddress + offset, 'int');
 
                                 if (pointer === 0) {
                                     return null;

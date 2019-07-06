@@ -1,4 +1,3 @@
-
 export enum PedStatus {
     normal_on_foot = 0x01,
     walking = 0x07,

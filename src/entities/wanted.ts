@@ -1,5 +1,4 @@
-import MemoryEntity from "../decorators/memory/memory-entity";
-import Prop from "../decorators/memory/prop";
+import {MemoryEntity, Prop} from "../decorators";
 import {Entity} from "./entity";
 
 @MemoryEntity()
