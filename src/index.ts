@@ -1,10 +1,11 @@
 import Game from "./entities/game";
-let instance = Game.instance;
+import {user32} from "./libs/user32";
 
 setInterval(() => {
-    let m206 = instance.spawnVehicle(130);
-    console.log(m206.modelIndex);
-}, 1000);
+    console.log(Game.instance.time);
+    if (user32.GetKeyState(9) < 0) {
+    }
+}, 500);
 
 /*
 let proc = myLib.OpenProcess(0x001F0FFF, false, 224);

@@ -1,5 +1,5 @@
 import {AllocationInfo} from "../injector";
-import {Process} from "./Process";
+import {Process} from "../Process";
 import {Vehicle} from './vehicle';
 import {Entity} from './entity';
 import {DATATYPE} from '../datatype';
@@ -76,9 +76,10 @@ export abstract class GameBase extends Entity {
     }
 
     public writeAlloc(alloc: AllocationInfo) {
-        alloc.buffer.forEach((b, i) => {
+        for (let i = 0; i < alloc.offset + 1; i++) {
+            let b = alloc.buffer[i];
             this.write(alloc.address + i, 'ubyte', b);
-        });
+        }
     }
 
     public get vehicles(): Vehicle[] {

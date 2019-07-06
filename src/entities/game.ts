@@ -2,15 +2,17 @@ import MemoryEntity from '../decorators/memory/memory-entity';
 import Prop from '../decorators/memory/prop';
 import {Injector} from "../injector";
 import {getProcessId, kernel} from "../libs/kernel";
+import {Process} from "../Process";
 import Cheat from "./cheat";
 import {FunctionAddress} from "./functions";
 import {GameBase} from './game-base';
 import {Player} from './player';
-import {Process} from "./Process";
 import {Vehicle} from './vehicle';
 
 @MemoryEntity()
 export default class Game extends GameBase {
+    public static SET_HELP_MESSAGE = 0x55BFC0;
+
     public static get instance() {
         if (!this.singleton) {
             const processId = getProcessId(this.EXE);
@@ -40,9 +42,32 @@ export default class Game extends GameBase {
     @Prop.float(0x00686FC8) public carDensity: number;
     @Prop.float(0x0068F5F0) public gravity: number;
     @Prop.float(0x0097F264) public timeScale: number;
+    @Prop.byte(0x0068723B) public trafficAccidents: number;
 
     protected constructor(protected baseAddress: number = 0x0) {
         super(baseAddress);
+    }
+
+    public get time(): string {
+        let h = this.hour;
+        let m = this.minute;
+        let hh;
+        let mm;
+
+        hh = h < 10 ? `0${h}` : `${h}`;
+        mm = m < 10 ? `0${m}` : `${m}`;
+
+        return `${hh}:${mm}`;
+    }
+
+    public set time(time: string) {
+        let regExp = /(\d\d):(\d\d)/;
+        let match = time.match(regExp);
+        if (match) {
+            let [, h, m] = match;
+            this.hour = +h;
+            this.minute = +m;
+        }
     }
 
     public spawnVehicle(modelIndex: number) {
@@ -70,12 +95,12 @@ export default class Game extends GameBase {
         this.writeAlloc(alloc);
 
         let aa = Buffer.alloc(5);
-        kernel.CreateRemoteThread(this.process.handle, null, 0, alloc.address, alloc.address, 0, aa);
+        kernel.CreateRemoteThread(this.process.handle, null,
+            0, alloc.address, alloc.address, 0, aa);
         let res = this.read(resultAlloc.address, 'int');
         let res2 = this.read(res as number, 'int');
 
         if (typeof res !== 'number') {
-            debugger;
             throw new Error();
         }
         return new Vehicle(res as number);
@@ -91,7 +116,46 @@ export default class Game extends GameBase {
             .ret()
         ;
         this.writeAlloc(alloc);
+
+        debugger;
+
         let aa = Buffer.alloc(5);
-        kernel.CreateRemoteThread(this.process.handle, null, 0, alloc.address, alloc.address, 0, aa);
+        kernel.CreateRemoteThread(this.process.handle, null,
+            0, alloc.address, alloc.address, 0, aa);
+    }
+
+    public helpMessage(text: string) {
+        let inj = new Injector(this.process);
+        let stringAlloc = inj.alloc(10);
+        let resultAlloc = inj.alloc(4);
+
+        let buf = Buffer.from(text, 'utf-8');
+        kernel.WriteProcessMemory(this.process.handle, stringAlloc.address, buf, buf.length, 0);
+
+        let alloc = inj.alloc(100)
+            // .movEAXOffset(stringAlloc.address)
+                .pushUInt8(0)
+                .pushUInt8(0)
+                .pushUInt8(0)
+                // .pushEAX()
+                .relativeCall(Game.SET_HELP_MESSAGE)
+                .ret()
+        ;
+
+        this.writeAlloc(alloc);
+
+        debugger;
+
+        let aa = Buffer.alloc(5);
+        kernel.CreateRemoteThread(this.process.handle, null,
+            0, alloc.address, alloc.address, 0, aa);
+        let res = this.read(resultAlloc.address, 'int');
+        let res2 = this.read(res as number, 'int');
+
+        if (typeof res !== 'number') {
+            debugger;
+            throw new Error();
+        }
+        return new Vehicle(res as number);
     }
 }

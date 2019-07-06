@@ -40,6 +40,11 @@ export default function MemoryEntity(): ClassDecorator {
                                 return result;
                             } else if (type instanceof MemoryPointer) {
                                 let pointer = Game.instance.read(this.baseAddress + offset, 'int');
+
+                                if (pointer === 0) {
+                                    return null;
+                                }
+
                                 return new (type.cls as any)(pointer);
                             } else {
                                 debugger;

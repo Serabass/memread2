@@ -1,7 +1,7 @@
 import {Library, Method, never} from "ffi-decorators";
 
 @Library({libPath: 'user32'})
-export class User {
+export class User32 {
     constructor(path?: string) {
     }
 
@@ -10,4 +10,10 @@ export class User {
         return never();
     }
 
+    @Method({types: ['short', ['int']]})
+    public GetKeyState(key: number): number {
+        return never();
+    }
 }
+
+export const user32 = new User32();

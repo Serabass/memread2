@@ -1,5 +1,5 @@
 import {FunctionAddress} from "./entities/functions";
-import {Process} from "./entities/Process";
+import {Process} from "./Process";
 import {kernel} from "./libs/kernel";
 
 const MEM_RESERVE = 0x2000;
@@ -9,7 +9,7 @@ const PAGE_READWRITE = 0x04;
 export class AllocationInfo {
     public buffer: Buffer;
 
-    private offset = 0;
+    public offset = 0;
 
     constructor(public address: number, public size: number) {
         this.buffer = Buffer.alloc(size);
@@ -62,6 +62,18 @@ export class AllocationInfo {
 
     public popECX() {
         this.buffer.writeUInt8(0x59, this.incOffset());
+
+        return this;
+    }
+
+    public pushEAX() {
+        this.buffer.writeUInt8(0x50, this.incOffset());
+        return this;
+    }
+
+    public movEAXOffset(offset: number) {
+        this.buffer.writeUInt8(0xA1, this.incOffset());
+        this.buffer.writeUInt32LE(offset, this.incOffset(4));
 
         return this;
     }

@@ -1,4 +1,4 @@
-import {kernel, PROCESS_ALL_ACCESS} from "../libs/kernel";
+import {kernel, PROCESS_ALL_ACCESS} from "./libs/kernel";
 import ref from 'ref';
 
 export class Process {
