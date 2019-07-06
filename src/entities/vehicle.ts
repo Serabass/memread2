@@ -3,6 +3,7 @@ import Prop from '../decorators/memory/prop';
 import {Entity} from './entity';
 import Game from './game';
 import {Ped} from "./ped";
+import {RadioStation} from "./radio-station";
 
 @MemoryEntity()
 export class Vehicle extends Entity {
@@ -27,8 +28,17 @@ export class Vehicle extends Entity {
     @Prop.array(0x1AC, Ped)
     public passengers: Ped[];
 
-    @Prop(0x1CC, 'byte')
+    @Prop.byte(0x1CC)
     public numPassengers: number;
+
+    @Prop.byte(0x1D0)
+    public maxPassengers: number;
+
+    @Prop.int(0x230)
+    public lockStatus: number;
+
+    @Prop.int(0x23C)
+    public radioStation: RadioStation;
 
     @Prop.float(0x354)
     public health: number;
