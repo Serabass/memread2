@@ -14,12 +14,6 @@ export class Ped extends Physical {
     @Prop(0x34, Vector3d)
     public position: Vector3d;
 
-    @Prop.byte(0x5C)
-    public modelIndex: number;
-
-    @Prop(0x70, Vector3d)
-    public movementSpeed: Vector3d;
-
     @Prop.bool(0x140)
     public infiniteRun: boolean;
 
