@@ -32,7 +32,6 @@ Prop.short = (offset: number) => Prop(offset, 'short');
 Prop.bool = (offset: number) => Prop(offset, 'bool');
 Prop.array = (offset: number, Type: any) => Prop(offset, MemoryArrayPointer.of(Type));
 Prop.pointer = (offset: number, Type: any) => {
-    debugger;
     return Prop(offset, MemoryPointer.from(Type));
 };
 Prop.sandbox = (t: any, p: any) => {

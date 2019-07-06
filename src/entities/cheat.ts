@@ -1,5 +1,5 @@
 import {MemoryEntity, Prop} from "../decorators/memory";
-import {Entity} from "./";
+import {Entity} from "./entity";
 
 @MemoryEntity()
 export class Cheat extends Entity {

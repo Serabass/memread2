@@ -1,8 +1,9 @@
 import {MemoryEntity, Prop} from '../decorators';
-import {Entity, Game, Ped, RadioStation} from './';
+import {Game, Ped, RadioStation} from './';
+import {Physical} from './physical';
 
 @MemoryEntity()
-export class Vehicle extends Entity {
+export class Vehicle extends Physical {
     @Prop.float(0x100)
     public speed: number;
 

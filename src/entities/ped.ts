@@ -1,6 +1,11 @@
 import 'reflect-metadata';
 import {MemoryEntity, Prop, RemoteFunction} from '../decorators';
-import {PedStatus, Physical, Vector3d, Vehicle, Wanted} from "./";
+import {Drunkenness} from "./drunkenness";
+import {PedStatus} from "./ped-status";
+import {Vector3d} from "./vector-3d";
+import {Vehicle} from "./vehicle";
+import {Wanted} from "./wanted";
+import {Physical} from "./physical";
 
 @MemoryEntity()
 export class Ped extends Physical {
@@ -52,11 +57,8 @@ export class Ped extends Physical {
     @Prop.pointer(0x5F4, Wanted)
     public wanted: Wanted;
 
-    @Prop.bool(0x638)
-    public drunkenness: boolean;
-
-    @Prop.bool(0x639)
-    public drunkennessCountdownToggle: number;
+    @Prop(0x638, Drunkenness)
+    public drunkenness: Drunkenness;
 
     @RemoteFunction()
     public duck: () => void;

@@ -1,5 +1,6 @@
 import {MemoryEntity} from '../decorators';
-import {Game, Ped} from './';
+import {Game} from './game';
+import {Ped} from './ped';
 
 @MemoryEntity()
 export class Player extends Ped {

@@ -1,5 +1,5 @@
-import {FunctionAddress} from "./entities/functions";
-import {kernel} from "./libs/kernel";
+import {FunctionAddress} from "./entities";
+import {kernel} from "./libs";
 import {Process} from "./Process";
 
 const MEM_RESERVE = 0x2000;

@@ -1,5 +1,5 @@
-import {Player} from "./entities/player";
-import {user32} from "./libs/user32";
+import {Player} from "./entities";
+import {user32} from "./libs";
 
 setInterval(() => {
     Player.instance.health = 120;

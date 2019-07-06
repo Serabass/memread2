@@ -1,3 +1,4 @@
+export * from './vehicle';
 export * from './automobile';
 export * from './cheat';
 export * from './entity';
@@ -13,5 +14,4 @@ export * from './player';
 export * from './police';
 export * from './radio-station';
 export * from './vector-3d';
-export * from './vehicle';
 export * from './wanted';

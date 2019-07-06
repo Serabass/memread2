@@ -1,5 +1,5 @@
 import {MemoryEntity, Prop} from "../decorators/memory";
-import {MODEL} from "./model";
+import {MODEL} from "./";
 
 @MemoryEntity()
 export class Entity {

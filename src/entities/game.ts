@@ -1,8 +1,12 @@
 import {MemoryEntity, Prop} from '../decorators';
 import {Injector} from "../injector";
-import {getProcessId, kernel} from "../libs";
+import {kernel} from "../libs";
 import {Process} from "../process";
-import {Cheat, FunctionAddress, GameBase, Player, Vehicle} from "./";
+import {Cheat} from "./cheat";
+import {FunctionAddress} from "./functions";
+import {Player} from "./player";
+import {Vehicle} from "./vehicle";
+import {GameBase} from "./game-base";
 
 @MemoryEntity()
 export class Game extends GameBase {
@@ -26,7 +30,8 @@ export class Game extends GameBase {
 
     public static get instance() {
         if (!this.singleton) {
-
+            this.singleton = new Game();
+            this.singleton.process = Process.instance;
         }
 
         return this.singleton;

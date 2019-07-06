@@ -1,19 +1,20 @@
 export class MemoryPointer {
-    constructor(public cls: Function) {
 
+    public static from(cls: any) {
+        return new MemoryPointer(cls);
     }
 
-    public static from(cls: Function) {
-        return new MemoryPointer(cls);
+    constructor(public cls: any) {
+
     }
 }
 
 export class MemoryArrayPointer {
-    constructor(public cls: Function) {
 
-    }
-
-    public static of(cls: Function) {
+    public static of(cls: any) {
         return new MemoryArrayPointer(cls);
+    }
+    constructor(public cls: any) {
+
     }
 }
