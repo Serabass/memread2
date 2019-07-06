@@ -31,7 +31,9 @@ Prop.byte = (offset: number) => Prop(offset, 'byte');
 Prop.short = (offset: number) => Prop(offset, 'short');
 Prop.bool = (offset: number) => Prop(offset, 'bool');
 Prop.array = (offset: number, Type: any) => Prop(offset, MemoryArrayPointer.of(Type));
-Prop.pointer = (offset: number, Type: any) => Prop(offset, MemoryPointer.from(Type));
+Prop.pointer = (offset: number, Type?: any) => {
+    return Prop(offset, MemoryPointer.from(Type));
+};
 Prop.sandbox = (t: any, p: any) => {
     let a = Reflect.getMetadata('design:type', t, p);
     let k = Reflect.getMetadataKeys(t, p);

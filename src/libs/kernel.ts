@@ -1,6 +1,6 @@
 // https://github.com/stegru/gpii-service/blob/7ee8b8e8179ac0bcfff9f7e7c83abbbb9f2f19e6/src/windows.js
 
-import {Library, Method, never} from 'ffi-decorators';
+import {Library, Method, never} from '../../vendor/ffi-decorators/src';
 import arrayType from "ref-array";
 import Struct from "ref-struct";
 

@@ -34,7 +34,7 @@ export default class Game extends GameBase {
 
     public cheat: Cheat = Cheat.instance;
 
-    @Prop.pointer(0x94AD28, Player) public player: Player;
+    @Prop.pointer(0x94AD28) public player: Player;
     @Prop.array(0x0094AD2C, Vehicle) public vehicles: Vehicle[];
     @Prop.int(0x000094ADC8) public money: number;
     @Prop.byte(0x000A10B6B) public hour: number;
