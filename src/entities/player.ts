@@ -22,7 +22,7 @@ export class Player extends Ped {
         let resultAlloc = inj.alloc(4);
         let alloc = inj.alloc(100)
             .relativeCall(FunctionAddress.PLAYER_GET_CAR)
-            .moveEcxEax() // mov ecx, eax
+            .movEcxEax() // mov ecx, eax
             .movResult(resultAlloc.address)
             .ret();
 

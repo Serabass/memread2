@@ -32,6 +32,9 @@ export class Game extends GameBase {
     @Prop.byte(0x00068723B)
     public trafficAccidents: number;
 
+    @Prop.bool(0x000A10AB5)
+    public freeRespray: boolean;
+
     @Prop.byte(0x000489D79)
     public goodCitizenBonus: number;
 

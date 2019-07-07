@@ -19,6 +19,11 @@ export class AllocationInfo {
         this.buffer = Buffer.alloc(size);
     }
 
+    public buf(cb: (b: Buffer, inc: (i?: number) => number) => void) {
+        cb(this.buffer, this.incOffset.bind(this));
+        return this;
+    }
+
     public uInt8(value: number) {
         this.buffer.writeUInt8(value, this.incOffset());
         return this;
@@ -81,9 +86,9 @@ export class AllocationInfo {
         return this;
     }
 
-    public movDWORDPTRToEcx(address: number) {
+    public movDSToEcx(address: number) {
         this.buffer.writeUInt8(0x8B, this.incOffset());
-        this.buffer.writeUInt8(0x0C, this.incOffset());
+        this.buffer.writeUInt8(0x0D, this.incOffset());
         this.buffer.writeUInt32LE(address, this.incOffset(4));
         return this;
     }

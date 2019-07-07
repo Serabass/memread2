@@ -56,9 +56,17 @@ export class Vehicle extends Physical {
 
     public fix() {
         let inj = new Injector();
-        let resultAlloc = inj.alloc(4);
         let alloc = inj.alloc(100)
-            .movDWORDPTRToEcx(this.baseAddress)
+            .buf((b, inc) => {
+                // NEED:
+                // mov eax, ds: baseAddress
+                // mov ecx, eax
+                b.writeUInt8(0xA1, inc()); // mov eax, ds: baseAddress
+                b.writeUInt32LE(this.baseAddress, inc(4)); // mov eax, ds: baseAddress
+
+                b.writeUInt8(0x89, inc()); // mov ecx, eax
+                b.writeUInt8(0xC1, inc()); // mov ecx, eax
+            })
             .relativeCall(FunctionAddress.VEHICLE_FIX)
             .ret();
 
@@ -70,13 +78,6 @@ export class Vehicle extends Physical {
 
         kernel.WaitForSingleObject(Process.instance.handle, WFSO.WAIT_TIMEOUT);
 
-        let res = Process.instance.read(resultAlloc.address, 'int');
-        let res2 = Process.instance.read(res as number, 'int');
-
-        if (typeof res !== 'number') {
-            throw new Error();
-        }
-
-        return res;
+        return;
     }
 }
