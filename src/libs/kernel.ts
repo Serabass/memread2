@@ -41,7 +41,7 @@ function arrToStr(a) {
         .join('');
 }
 
-enum WFSO {
+export enum WFSO {
     INFINITE = 0xFFFFFFFF,
     WAIT_ABANDONED = 0x00000080,
     WAIT_OBJECT_0 = 0x00000000,
@@ -108,7 +108,7 @@ export class Kernel {
 
     @Method({types: ['int', ['int', 'int', 'ulong', 'uint', 'int', 'uint', 'uint *']]})
     public CreateRemoteThread(hProcess, lpThreadAttributes, dwStackSize,
-                              lpStartAddress, lpParameter, dwCreationFlags, lpThreadId) {
+                              lpStartAddress, lpParameter, dwCreationFlags, lpThreadId): number {
         return never();
     }
 

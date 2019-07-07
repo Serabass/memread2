@@ -10,7 +10,11 @@ export class Entity {
 
     }
 
+    public get address() {
+        return `0x${this.baseAddress.toString(16)}`;
+    }
+
     public toString(): string {
-        return `${(this.constructor as any).name}@0x${this.baseAddress.toString(16)}`;
+        return `${(this.constructor as any).name}@${this.address}`;
     }
 }

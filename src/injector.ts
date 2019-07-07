@@ -11,6 +11,10 @@ export class AllocationInfo {
 
     public offset = 0;
 
+    public get hexAddr() {
+        return this.address.toString(16);
+    }
+
     constructor(public address: number, public size: number) {
         this.buffer = Buffer.alloc(size);
     }
@@ -68,6 +72,19 @@ export class AllocationInfo {
 
     public pushEAX() {
         this.buffer.writeUInt8(0x50, this.incOffset());
+        return this;
+    }
+
+    public movEcxEax() {
+        this.buffer.writeUInt8(0x89, this.incOffset());
+        this.buffer.writeUInt8(0xC1, this.incOffset());
+        return this;
+    }
+
+    public movDWORDPTRToEcx(address: number) {
+        this.buffer.writeUInt8(0x8B, this.incOffset());
+        this.buffer.writeUInt8(0x0C, this.incOffset());
+        this.buffer.writeUInt32LE(address, this.incOffset(4));
         return this;
     }
 

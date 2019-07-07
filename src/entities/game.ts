@@ -50,7 +50,6 @@ export class Game extends GameBase {
     public spawnVehicle(modelIndex: number) {
         let inj = new Injector();
         let resultAlloc = inj.alloc(4);
-
         let alloc = inj.alloc(100)
             .pushInt32(modelIndex)
             .relativeCall(FunctionAddress.SPAWN_VEHICLE)

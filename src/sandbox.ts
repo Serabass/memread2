@@ -4,8 +4,9 @@ import {user32} from "./libs";
 setInterval(() => {
     Player.instance.health = 120;
     if (user32.GetKeyState(9) < 0) {
-        Player.instance.wanted.chaosLevel += 50;
-        console.log(Player.instance.wanted.chaosLevel, Player.instance.wanted.visible);
+        let car = Player.instance.getCar();
+        console.log(car.health);
+        console.log(car.modelIndex);
     }
 }, 500);
 
