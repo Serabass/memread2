@@ -1,5 +1,5 @@
 import {MemoryEntity, Prop} from "../decorators";
-import {Entity} from "./";
+import {Entity} from "./entity";
 
 @MemoryEntity()
 export class Wanted extends Entity {

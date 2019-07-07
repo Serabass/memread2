@@ -29,7 +29,6 @@ export function MemoryEntity(): ClassDecorator {
                                 let result: any[] = [];
                                 let p = baseAddress + offset;
                                 let addr = Process.instance.read(p, 'int');
-                                let i = 0;
 
                                 while (addr !== 0) {
                                     result.push(new (type.cls as any)(addr as any) as any);
@@ -40,8 +39,6 @@ export function MemoryEntity(): ClassDecorator {
                                 return result;
                             } else if (type instanceof MemoryPointer) {
                                 let pointer = Process.instance.read(baseAddress + offset, 'int');
-
-                                key; prop;
 
                                 if (pointer === 0) {
                                     return null;

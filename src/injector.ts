@@ -92,7 +92,7 @@ export class AllocationInfo {
 }
 
 export class Injector {
-    constructor(public process: Process) {
+    constructor(public process: Process = Process.instance) {
 
     }
 

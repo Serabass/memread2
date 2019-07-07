@@ -41,6 +41,13 @@ function arrToStr(a) {
         .join('');
 }
 
+enum WFSO {
+    INFINITE = 0xFFFFFFFF,
+    WAIT_ABANDONED = 0x00000080,
+    WAIT_OBJECT_0 = 0x00000000,
+    WAIT_TIMEOUT = 0x00000102,
+}
+
 export const PROCESS_ALL_ACCESS = 0x1fffff;
 
 @Library({libPath: 'kernel32'})
@@ -105,6 +112,10 @@ export class Kernel {
         return never();
     }
 
+    @Method({types: ['int', ['int', 'uint']]})
+    public WaitForSingleObject(hProcess, wait) {
+        return never();
+    }
 }
 
 export function getProcessId(exeName: string) {

@@ -2,27 +2,38 @@ import {MemoryEntity, Prop} from '../decorators';
 import {Injector} from "../injector";
 import {kernel} from "../libs";
 import {Process} from "../process";
-import {Cheat} from "./cheat";
 import {FunctionAddress} from "./functions";
+import {GameBase} from "./game-base";
 import {Player} from "./player";
 import {Vehicle} from "./vehicle";
-import {GameBase} from "./game-base";
 
 @MemoryEntity()
 export class Game extends GameBase {
-    public static SET_HELP_MESSAGE = 0x55BFC0;
     public static singleton: Game;
-    @Prop.pointer(0x94AD28, Player) public player: Player;
 
-    public cheat: Cheat = Cheat.instance;
-    @Prop.array(0x0094AD2C, Vehicle) public vehicles: Vehicle[];
-    @Prop.int(0x000094ADC8) public money: number;
-    @Prop.byte(0x000A10B6B) public hour: number;
-    @Prop.byte(0x000A10B92) public minute: number;
-    @Prop.float(0x00686FC8) public carDensity: number;
-    @Prop.float(0x0068F5F0) public gravity: number;
-    @Prop.float(0x0097F264) public timeScale: number;
-    @Prop.byte(0x0068723B) public trafficAccidents: number;
+    @Prop.pointer(0x94AD28, Player)
+    public player: Player;
+
+    @Prop.array(0x0094AD2C, Vehicle)
+    public vehicles: Vehicle[];
+
+    @Prop.int(0x000094ADC8)
+    public money: number;
+
+    @Prop.float(0x00686FC8)
+    public carDensity: number;
+
+    @Prop.float(0x0068F5F0)
+    public gravity: number;
+
+    @Prop.float(0x0097F264)
+    public timeScale: number;
+
+    @Prop.byte(0x00068723B)
+    public trafficAccidents: number;
+
+    @Prop.byte(0x000489D79)
+    public goodCitizenBonus: number;
 
     protected constructor(protected baseAddress: number = 0x0) {
         super(baseAddress);
@@ -31,36 +42,13 @@ export class Game extends GameBase {
     public static get instance() {
         if (!this.singleton) {
             this.singleton = new Game();
-            this.singleton.process = Process.instance;
         }
 
         return this.singleton;
     }
 
-    public get time(): string {
-        let h = this.hour;
-        let m = this.minute;
-        let hh;
-        let mm;
-
-        hh = h < 10 ? `0${h}` : `${h}`;
-        mm = m < 10 ? `0${m}` : `${m}`;
-
-        return `${hh}:${mm}`;
-    }
-
-    public set time(time: string) {
-        let regExp = /(\d\d):(\d\d)/;
-        let match = time.match(regExp);
-        if (match) {
-            let [, h, m] = match;
-            this.hour = +h;
-            this.minute = +m;
-        }
-    }
-
     public spawnVehicle(modelIndex: number) {
-        let inj = new Injector(this.process);
+        let inj = new Injector();
         let resultAlloc = inj.alloc(4);
 
         let alloc = inj.alloc(100)
@@ -70,33 +58,23 @@ export class Game extends GameBase {
             .popECX()
             .ret();
 
-        // buf.writeUInt8(0x68, 0); // +1 push
-        // buf.writeInt32LE(modelIndex, 1); // +4 modelIndex
-        // buf.writeUInt8(0xE8, 5); // relative call
-        // let offset = alloc.calculateOffset(5, spawnVehicleFn);
-        // buf.writeInt32LE(offset, 6); // fnAddr
-        // buf.writeUInt8(0x89, 10);
-        // buf.writeUInt8(0x0D, 11); // mov DWORD PTR ds:result
-        // buf.writeInt32LE(resultAlloc.address, 12);
-        // buf.writeUInt8(0x59, 16); // pop ecx
-        // buf.writeUInt8(0xC3, 17); // ret
-
-        this.process.writeAlloc(alloc);
+        Process.instance.writeAlloc(alloc);
 
         let aa = Buffer.alloc(5);
-        kernel.CreateRemoteThread(this.process.handle, null,
+        kernel.CreateRemoteThread(Process.instance.handle, null,
             0, alloc.address, alloc.address, 0, aa);
-        let res = this.process.read(resultAlloc.address, 'int');
-        let res2 = this.process.read(res as number, 'int');
+        let res = Process.instance.read(resultAlloc.address, 'int');
+        let res2 = Process.instance.read(res as number, 'int');
 
         if (typeof res !== 'number') {
             throw new Error();
         }
+
         return new Vehicle(res as number);
     }
 
     public blowUpVehicle(addr: number) {
-        let inj = new Injector(this.process);
+        let inj = new Injector();
         let alloc = inj.alloc(100)
             .uInt8(0xB9).int32(addr)
             .uInt8(0x8B).uInt8(0x39)
@@ -104,20 +82,21 @@ export class Game extends GameBase {
             .relativeCall(FunctionAddress.BLOWUP_VEHICLE)
             .ret()
         ;
-        this.process.writeAlloc(alloc);
+        Process.instance.writeAlloc(alloc);
 
         let aa = Buffer.alloc(5);
-        kernel.CreateRemoteThread(this.process.handle, null,
+        kernel.CreateRemoteThread(Process.instance.handle, null,
             0, alloc.address, alloc.address, 0, aa);
     }
 
     public helpMessage(text: string) {
-        let inj = new Injector(this.process);
+        let inj = new Injector();
         let stringAlloc = inj.alloc(10);
         let resultAlloc = inj.alloc(4);
 
         let buf = Buffer.from(text, 'utf-8');
-        kernel.WriteProcessMemory(this.process.handle, stringAlloc.address, buf, buf.length, 0);
+        kernel.WriteProcessMemory(Process.instance.handle, stringAlloc.address,
+            buf, buf.length, 0);
 
         let alloc = inj.alloc(100)
             // .movEAXOffset(stringAlloc.address)
@@ -125,17 +104,17 @@ export class Game extends GameBase {
                 .pushUInt8(0)
                 .pushUInt8(0)
                 // .pushEAX()
-                .relativeCall(Game.SET_HELP_MESSAGE)
+                .relativeCall(FunctionAddress.SET_HELP_MESSAGE)
                 .ret()
         ;
 
-        this.process.writeAlloc(alloc);
+        Process.instance.writeAlloc(alloc);
 
         let aa = Buffer.alloc(5);
-        kernel.CreateRemoteThread(this.process.handle, null,
+        kernel.CreateRemoteThread(Process.instance.handle, null,
             0, alloc.address, alloc.address, 0, aa);
-        let res = this.process.read(resultAlloc.address, 'int');
-        let res2 = this.process.read(res as number, 'int');
+        let res = Process.instance.read(resultAlloc.address, 'int');
+        let res2 = Process.instance.read(res as number, 'int');
 
         if (typeof res !== 'number') {
             throw new Error();

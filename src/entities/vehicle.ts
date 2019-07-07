@@ -1,5 +1,7 @@
 import {MemoryEntity, Prop} from '../decorators';
-import {Game, Ped, RadioStation} from './';
+import {Game} from './game';
+import {Ped} from './ped';
+import {RadioStation} from './radio-station';
 import {Physical} from './physical';
 
 @MemoryEntity()

@@ -5,8 +5,6 @@ import {MemoryArrayPointer, MemoryPointer} from '../../pointer';
 export function Prop(offset: number, type: DATATYPE = null): PropertyDecorator {
     return (target: any, propKey: string | symbol): any => {
         let props = Reflect.getMetadata('props', target);
-        let k = Reflect.getMetadataKeys(target);
-        let k2 = Reflect.getMetadataKeys(target, 'props');
 
         if (!type) {
             let designType = Reflect.getMetadata('design:type', target, propKey);
@@ -31,15 +29,7 @@ Prop.byte = (offset: number) => Prop(offset, 'byte');
 Prop.short = (offset: number) => Prop(offset, 'short');
 Prop.bool = (offset: number) => Prop(offset, 'bool');
 Prop.array = (offset: number, Type: any) => Prop(offset, MemoryArrayPointer.of(Type));
-Prop.pointer = (offset: number, Type: any) => {
-    return Prop(offset, MemoryPointer.from(Type));
-};
-Prop.sandbox = (t: any, p: any) => {
-    let a = Reflect.getMetadata('design:type', t, p);
-    let k = Reflect.getMetadataKeys(t, p);
-    let k2 = Reflect.getMetadataKeys(t);
-    debugger;
-};
+Prop.pointer = (offset: number, Type: any) => Prop(offset, MemoryPointer.from(Type));
 
 Prop.define = (type: any = null) => (target: any, propKey: string): any => {
     debugger;

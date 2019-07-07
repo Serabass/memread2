@@ -3,9 +3,9 @@ import {MemoryEntity, Prop, RemoteFunction} from '../decorators';
 import {Drunkenness} from "./drunkenness";
 import {PedStatus} from "./ped-status";
 import {Vector3d} from "./vector-3d";
+import {Physical} from "./physical";
 import {Vehicle} from "./vehicle";
 import {Wanted} from "./wanted";
-import {Physical} from "./physical";
 
 @MemoryEntity()
 export class Ped extends Physical {
