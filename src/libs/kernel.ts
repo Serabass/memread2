@@ -1,35 +1,23 @@
 // https://github.com/stegru/gpii-service/blob/7ee8b8e8179ac0bcfff9f7e7c83abbbb9f2f19e6/src/windows.js
 
-import {Library, Method, never} from 'ffi-decorators';
 import arrayType from "ref-array";
 import Struct from "ref-struct";
+import {Library, Method} from "../decorators/ffi/method";
+import {Param} from "../decorators/ffi/param";
+import {types} from "./types";
 
-let t = {
-    BOOL: "int",
-    HANDLE: "uint",
-    PHANDLE: "void*",
-    LP: "void*",
-    SIZE_T: "ulong",
-    WORD: "uint16",
-    DWORD: "ulong",
-    LONG: "long",
-    ULONG: "ulong",
-    PULONG: "ulong*",
-    LPTSTR: "char*",
-    Enum: "uint",
-};
 // GetProcessByName https://github.com/Zysen/node-winprocess/blob/master/winprocess.cc#L117
 
 export let PROCESSENTRY32 = new Struct({
-    dwSize: t.DWORD,
-    cntUsage: t.DWORD,
-    th32ProcessID: t.DWORD,
-    th32DefaultHeapID: t.LP,
-    th32ModuleID: t.DWORD,
-    cntThreads: t.DWORD,
-    th32ParentProcessID: t.DWORD,
-    pcPriClassBase: t.LONG,
-    dwFlags: t.DWORD,
+    dwSize: types.DWORD,
+    cntUsage: types.DWORD,
+    th32ProcessID: types.DWORD,
+    th32DefaultHeapID: types.LP,
+    th32ModuleID: types.DWORD,
+    cntThreads: types.DWORD,
+    th32ParentProcessID: types.DWORD,
+    pcPriClassBase: types.LONG,
+    dwFlags: types.DWORD,
     szExeFile: arrayType("char", 260),
 });
 
@@ -50,72 +38,76 @@ export enum WFSO {
 
 export const PROCESS_ALL_ACCESS = 0x1fffff;
 
+/**
+ * TODO Implement VirtualFreeEx method
+ */
 @Library({libPath: 'kernel32'})
 export class Kernel {
+    private static singleton: Kernel;
 
-    @Method({types: ['bool', ['int', 'int', 'pointer', 'int', 'int']]})
-    public ReadProcessMemory(hProcess: number,
-                             lpBaseAddress: number,
-                             lpBuffer: Buffer,
-                             dwSize: number,
-                             lpNumberOfBytesRead: any): number {
-        return never();
+    public static get instance() {
+        if (!this.singleton) {
+            this.singleton = new Kernel();
+        }
+
+        return this.singleton;
     }
 
     @Method({types: ['bool', ['int', 'int', 'pointer', 'int', 'int']]})
-    public WriteProcessMemory(hProcess: number,
-                              lpBaseAddress: number,
-                              lpBuffer: Buffer,
-                              dwSize: number,
-                              lpNumberOfBytesRead: any): number {
-        return never();
-    }
+    public ReadProcessMemory: (hProcess: number,
+                               lpBaseAddress: number,
+                               lpBuffer: Buffer,
+                               dwSize: number,
+                               lpNumberOfBytesRead: any) => number;
+
+    @Method({types: ['bool', ['int', 'int', 'pointer', 'int', 'int']]})
+    public WriteProcessMemory: (hProcess: number,
+                                lpBaseAddress: number,
+                                lpBuffer: Buffer,
+                                dwSize: number,
+                                lpNumberOfBytesRead: any) => number;
 
     @Method({types: ['int', ['int', 'bool', 'int']]})
-    public OpenProcess(processAccess: number, bInheritHandle: boolean, processId: number): number {
-        return never();
-    }
+    public OpenProcess: (processAccess: number,
+                         bInheritHandle: boolean,
+                         processId: number) => number;
 
     @Method({types: ['bool', ['int']]})
-    public CloseHandle(handle: number) {
-        return never();
-    }
+    public CloseHandle: (handle: number) => boolean;
 
     @Method({types: ['int', ['int', 'int']]})
-    public CreateToolhelp32Snapshot(dwFlags: number, th32ProcessID: any) {
-        return never();
-    }
+    public CreateToolhelp32Snapshot: (dwFlags: number,
+                                      th32ProcessID: any) => number;
 
-    @Method({types: ['bool', [t.DWORD, 'pointer']]})
-    public Process32First(hSnapshot: number, lppe: any) {
-        return never();
-    }
+    @Method({types: ['bool', [types.DWORD, 'pointer']]})
+    public Process32First: (hSnapshot: number,
+                            lppe: any) => boolean;
 
-    @Method({types: ['bool', [t.DWORD, 'pointer']]})
-    public Process32Next(hSnapshot: number, lppe: any) {
-        return never();
-    }
+    @Method({types: ['bool', [types.DWORD, 'pointer']]})
+    public Process32Next: (hSnapshot: number,
+                           lppe: any) => boolean;
 
     @Method({types: ['int', []]})
-    public GetLastError() {
-        return never();
-    }
+    public GetLastError: () => number;
 
     @Method({types: ['int', ['int', 'void *', 'ulong', 'uint', 'uint']]})
-    public VirtualAllocEx(hProcess, lpAddress, dwSize, flAllocationType, flProtect) {
-        return never();
-    }
+    public VirtualAllocEx: (hProcess,
+                            lpAddress,
+                            dwSize,
+                            flAllocationType,
+                            flProtect) => number;
 
     @Method({types: ['int', ['int', 'int', 'ulong', 'uint', 'int', 'uint', 'uint *']]})
-    public CreateRemoteThread(hProcess, lpThreadAttributes, dwStackSize,
-                              lpStartAddress, lpParameter, dwCreationFlags, lpThreadId): number {
-        return never();
-    }
+    public CreateRemoteThread: (hProcess,
+                                lpThreadAttributes,
+                                dwStackSize,
+                                lpStartAddress,
+                                lpParameter,
+                                dwCreationFlags,
+                                lpThreadId) => number;
 
     @Method({types: ['int', ['int', 'uint']]})
-    public WaitForSingleObject(hProcess, wait) {
-        return never();
-    }
+    public WaitForSingleObject: (hProcess, wait) => number;
 }
 
 export function getProcessId(exeName: string) {

@@ -1,9 +1,9 @@
 import {Key} from 'ts-keycode-enum';
-import {Game} from "./entities";
 import {Keyboard} from "./entities/keyboard";
+import {user32} from "./libs";
 
 setInterval(() => {
     if (Keyboard.keyPressed(Key.Tab)) {
-        Game.instance.spawnVehicle(206);
+        user32.MessageBox(0, "", "", 0);
     }
 }, 500);
