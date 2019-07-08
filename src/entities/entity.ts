@@ -4,7 +4,7 @@ import {MODEL} from "./model";
 @MemoryEntity()
 export class Entity {
     @Prop.ubyte(0x5C)
-    public modelIndex: MODEL;
+    public readonly modelIndex: MODEL;
 
     constructor(protected baseAddress: number) {
 

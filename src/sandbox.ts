@@ -1,5 +1,9 @@
-import {Player} from "./entities";
+import {Key} from 'ts-keycode-enum';
+import {Game} from "./entities";
+import {Keyboard} from "./entities/keyboard";
 
-let car = Player.instance.getCar();
-console.log(car.baseAddress.toString(16));
-car.fix();
+setInterval(() => {
+    if (Keyboard.keyPressed(Key.Tab)) {
+        Game.instance.spawnVehicle(206);
+    }
+}, 500);

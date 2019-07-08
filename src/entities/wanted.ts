@@ -10,6 +10,6 @@ export class Wanted extends Entity {
     public activity: number;
 
     @Prop.byte(0x20)
-    public visible: number;
+    public readonly visible: number;
 
 }

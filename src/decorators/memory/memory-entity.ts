@@ -44,6 +44,7 @@ export function MemoryEntity(): ClassDecorator {
                                     return null;
                                 }
 
+                                console.log('DEBUG:', key, prop);
                                 return new (type.cls as any)(pointer);
                             } else {
                                 debugger;

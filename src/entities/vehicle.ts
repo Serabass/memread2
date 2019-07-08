@@ -4,17 +4,17 @@ import {kernel, WFSO} from "../libs";
 import {Process} from "../process";
 import {FunctionAddress} from "./functions";
 import {Game} from './game';
-import {Ped} from './ped';
+import {Ped} from './';
 import {RadioStation} from './radio-station';
 import {Physical} from './physical';
 
 @MemoryEntity()
 export class Vehicle extends Physical {
     @Prop.float(0x100)
-    public speed: number;
+    public readonly speed: number;
 
     @Prop.float(0x160)
-    public cruiseSpeed: number;
+    public readonly cruiseSpeed: number;
 
     @Prop.byte(0x1A0)
     public primaryColor: number;
@@ -26,13 +26,13 @@ export class Vehicle extends Physical {
     public alarmDuration: number;
 
     @Prop.pointer(0x1A8, Ped)
-    public driver: Ped;
+    public readonly driver: Ped;
 
     @Prop.array(0x1AC, Ped)
-    public passengers: Ped[];
+    public readonly passengers: Ped[];
 
     @Prop.byte(0x1CC)
-    public numPassengers: number;
+    public readonly numPassengers: number;
 
     @Prop.byte(0x1D0)
     public maxPassengers: number;

@@ -1,6 +1,10 @@
 import 'reflect-metadata';
-import {MemoryEntity, Prop, RemoteFunction} from '../decorators';
+import {MemoryEntity, Prop} from '../decorators';
+import {Injector} from "../injector";
+import {kernel, WFSO} from "../libs";
+import {Process} from "../process";
 import {Drunkenness} from "./drunkenness";
+import {FunctionAddress} from "./functions";
 import {PedStatus} from "./ped-status";
 import {Vector3d} from "./vector-3d";
 import {Physical} from "./physical";
@@ -16,10 +20,10 @@ export class Ped extends Physical {
     public infiniteRun: boolean;
 
     @Prop.int(0x170)
-    public targetEntity: number;
+    public readonly targetEntity: number;
 
     @Prop.int(0x244)
-    public status: PedStatus;
+    public readonly status: PedStatus;
 
     @Prop.float(0x354)
     public health: number;
@@ -43,13 +47,13 @@ export class Ped extends Physical {
     public weaponAccuracy: number;
 
     @Prop.pointer(0x508, Ped)
-    public targetedPed: Ped;
+    public readonly targetedPed: Ped;
 
     @Prop.array(0x56C, Ped)
-    public nearestPeds: Ped[];
+    public readonly nearestPeds: Ped[];
 
     @Prop.short(0x594)
-    public nearestPedsCount: number;
+    public readonly nearestPedsCount: number;
 
     @Prop.int(0x596)
     public money: number;
@@ -60,8 +64,31 @@ export class Ped extends Physical {
     @Prop(0x638, Drunkenness)
     public drunkenness: Drunkenness;
 
-    @RemoteFunction()
-    public duck: () => void;
+    public duck() {
+        let inj = new Injector();
+        let resultAlloc = inj.alloc(4);
+        let alloc = inj.alloc(100)
+            .movDSToEcx(this.baseAddress)
+            .relativeCall(FunctionAddress.PED_DUCK)
+            .ret();
+
+        Process.instance.writeAlloc(alloc);
+
+        let aa = Buffer.alloc(5);
+        let thread = kernel.CreateRemoteThread(Process.instance.handle, null,
+            0, alloc.address, alloc.address, 0, aa);
+
+        kernel.WaitForSingleObject(Process.instance.handle, WFSO.WAIT_TIMEOUT);
+
+        let res = Process.instance.read(resultAlloc.address, 'int');
+        let res2 = Process.instance.read(res as number, 'int');
+
+        if (typeof res !== 'number') {
+            throw new Error();
+        }
+
+        return res;
+    }
 
     constructor(protected baseAddress: number) {
         super(baseAddress);

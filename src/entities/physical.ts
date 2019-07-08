@@ -6,5 +6,5 @@ import {Vector3d} from './vector-3d';
 @MemoryEntity()
 export class Physical extends Entity {
     @Prop(0x70, Vector3d)
-    public movementSpeed: Vector3d;
+    public readonly movementSpeed: Vector3d;
 }

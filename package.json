@@ -13,6 +13,7 @@
     "ffi-decorators": "^0.2.0",
     "ref-array": "^1.2.0",
     "reflect-metadata": "^0.1.13",
+    "ts-keycode-enum": "^1.0.6",
     "ts-node": "^8.3.0",
     "tslint": "^5.18.0",
     "typescript": "^3.5.2"
