@@ -3,6 +3,7 @@ import {Byte, Float, Int32} from "../decorators/memory/native-types";
 import {Injector} from "../injector";
 import {kernel} from "../libs";
 import {Process} from "../process";
+import {Clock} from "./clock";
 import {FunctionAddress} from "./functions";
 import {GameBase} from "./game-base";
 import {Player} from "./player";
@@ -18,26 +19,15 @@ export class Game extends GameBase {
     @Prop.array(0x0094AD2C, Vehicle)
     public vehicles: Vehicle[];
 
-    @Prop(0x000094ADC8)
-    public money: Int32;
+    @Prop(0x000094ADC8) public money: Int32;
+    @Prop(0x0000686FC8) public carDensity: Float;
+    @Prop(0x000068F5F0) public gravity: Float;
+    @Prop(0x000097F264) public timeScale: Float;
+    @Prop(0x000068723B) public trafficAccidents: Byte;
+    @Prop(0x0000A10AB5) public freeRespray: boolean;
+    @Prop(0x0000489D79) public goodCitizenBonus: Byte;
 
-    @Prop(0x00686FC8)
-    public carDensity: Float;
-
-    @Prop(0x0068F5F0)
-    public gravity: Float;
-
-    @Prop(0x0097F264)
-    public timeScale: Float;
-
-    @Prop(0x00068723B)
-    public trafficAccidents: Byte;
-
-    @Prop(0x000A10AB5)
-    public freeRespray: boolean;
-
-    @Prop(0x000489D79)
-    public goodCitizenBonus: Byte;
+    @Prop(0x000A10B00) public clock: Clock;
 
     protected constructor(protected baseAddress: number = 0x0) {
         super(baseAddress);
@@ -67,8 +57,8 @@ export class Game extends GameBase {
         let aa = Buffer.alloc(5);
         kernel.CreateRemoteThread(Process.instance.handle, null,
             0, alloc.address, alloc.address, 0, aa);
-        let res = Process.instance.read(resultAlloc.address, 'int');
-        let res2 = Process.instance.read(res as number, 'int');
+        let res = Process.instance.read(resultAlloc.address, Int32);
+        let res2 = Process.instance.read(res as number, Int32);
 
         if (typeof res !== 'number') {
             throw new Error();
@@ -118,8 +108,8 @@ export class Game extends GameBase {
         let aa = Buffer.alloc(5);
         kernel.CreateRemoteThread(Process.instance.handle, null,
             0, alloc.address, alloc.address, 0, aa);
-        let res = Process.instance.read(resultAlloc.address, 'int');
-        let res2 = Process.instance.read(res as number, 'int');
+        let res = Process.instance.read(resultAlloc.address, Int32);
+        let res2 = Process.instance.read(res as number, Int32);
 
         if (typeof res !== 'number') {
             throw new Error();

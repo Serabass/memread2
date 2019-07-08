@@ -1,3 +1,3 @@
 import {Game} from "./entities";
 
-console.log(Game.instance.player.health);
+Game.instance.spawnVehicle(206);

@@ -1,27 +1,26 @@
 // https://stackoverflow.com/questions/28795242/injecting-only-function-and-running-it-through-createremotethread-c
 // http://www.cyberforum.ru/csharp-beginners/thread1974282.html
 import 'reflect-metadata';
+import {Entity} from "../../entities";
 import {MemoryArrayPointer, MemoryPointer} from '../../pointer';
 import {Process} from "../../process";
 import {Byte, Float, Int32, Short, UByte} from "./native-types";
 
-export function MemoryEntity(): ClassDecorator {
+export function MemoryEntity<T extends Entity>(): ClassDecorator {
     return (target: any) => {
-        let props = Reflect.getMetadata('props', target.prototype);
+        let props = Reflect.getMetadata('mem:props', target.prototype);
 
         if (!props) {
             props = {};
         }
 
-        Object.keys(props).forEach((key) => {
-            let prop = props[key];
-            Object.defineProperty(target.prototype, key, {
-                enumerable: true,
-                get() {
-                    let baseAddress = this.baseAddress || 0x0;
-                    let {offset, type} = prop;
-                    switch (typeof type) {
-                        case 'function':
+        Object.entries(props).forEach(([key, prop]: any[]) => {
+            let {offset, type} = prop;
+            let get: any = (() => {
+                switch (typeof type) {
+                    case 'function':
+                        return function(this: any) {
+                            let baseAddress = this.baseAddress || 0x00;
                             let address = baseAddress + offset;
 
                             switch (type) {
@@ -37,13 +36,13 @@ export function MemoryEntity(): ClassDecorator {
                                     debugger;
                             }
 
-                            debugger;
                             return new type(address);
-                        case 'string':
-                            debugger;
-                            return Process.instance.read(baseAddress + offset, type);
-                        case 'object':
-                            if (type instanceof MemoryArrayPointer) {
+                        };
+
+                    case 'object':
+                        if (type instanceof MemoryArrayPointer) {
+                            return function(this: any) {
+                                let baseAddress = this.baseAddress || 0x00;
                                 // WRONG
                                 let result: any[] = [];
                                 let p = baseAddress + offset;
@@ -56,7 +55,10 @@ export function MemoryEntity(): ClassDecorator {
                                 }
 
                                 return result;
-                            } else if (type instanceof MemoryPointer) {
+                            };
+                        } else if (type instanceof MemoryPointer) {
+                            return function(this: any) {
+                                let baseAddress = this.baseAddress || 0x00;
                                 let pointer = Process.instance.read(baseAddress + offset, Int32);
 
                                 if (pointer === 0) {
@@ -64,19 +66,19 @@ export function MemoryEntity(): ClassDecorator {
                                 }
 
                                 console.log('DEBUG:', key, prop);
-                                return new (type.cls as any)(pointer);
-                            } else {
-                                debugger;
-                            }
-                            break;
-                        default:
-                            debugger;
-                    }
-                    // return Game.instance.read();
-                },
+                                return new type.cls.at(pointer as any);
+                            };
+                        }
+                        debugger;
+                }
+            })();
+
+            Object.defineProperty(target.prototype, key, {
+                enumerable: true,
+                get,
                 set(value) {
-                    let {offset, type} = prop;
-                    Process.instance.write(this.baseAddress + offset, type, value);
+                    let baseAddress = this.baseAddress || 0x00;
+                    Process.instance.write(baseAddress + offset, type, value);
                 },
             });
         });

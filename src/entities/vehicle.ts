@@ -9,7 +9,6 @@ import {Game} from './game';
 import {Physical} from './physical';
 import {RadioStation} from './radio-station';
 
-
 @MemoryEntity()
 export class Vehicle extends Physical {
     @Prop(0x100)

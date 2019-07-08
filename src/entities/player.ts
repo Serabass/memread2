@@ -1,4 +1,5 @@
 import {MemoryEntity, RemoteFunction} from '../decorators';
+import {Int32} from "../decorators/memory/native-types";
 import {Injector} from "../injector";
 import {kernel, WFSO} from "../libs";
 import {Process} from "../process";
@@ -52,8 +53,8 @@ export class Player extends Ped {
 
         kernel.WaitForSingleObject(Process.instance.handle, WFSO.WAIT_TIMEOUT);
 
-        let res = Process.instance.read(resultAlloc.address, 'int');
-        let res2 = Process.instance.read(res as number, 'int');
+        let res = Process.instance.read(resultAlloc.address, Int32);
+        let res2 = Process.instance.read(res as number, Int32);
 
         if (typeof res !== 'number') {
             throw new Error();

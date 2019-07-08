@@ -1,7 +1,8 @@
-import * as ByteBuffer from "bytebuffer";
+import  "bytebuffer";
 import {FunctionAddress} from "./entities";
 import {kernel} from "./libs";
 import {Process} from "./Process";
+import ByteBuffer = require("bytebuffer");
 
 const MEM_RESERVE = 0x2000;
 const MEM_COMMIT = 0x1000;
@@ -16,9 +17,13 @@ export class AllocationInfo {
         return this.address.toString(16);
     }
 
-    constructor(public address: number, public size: number) {
+    constructor(public address: number, public size: number, public injector: Injector) {
         debugger;
         this.buffer = new (ByteBuffer as any)(size, true);
+    }
+
+    public end() {
+        return this.injector;
     }
 
     public buf(cb: (b: ByteBuffer) => any) {
@@ -112,6 +117,11 @@ export class AllocationInfo {
             .writeUint8(0xC3);
         return this;
     }
+
+    public write() {
+        this.injector.process.writeAlloc(this);
+        return this;
+    }
 }
 
 export class Injector {
@@ -132,6 +142,6 @@ export class Injector {
             debugger;
         }
 
-        return new AllocationInfo(baseAddress, size);
+        return new AllocationInfo(baseAddress, size, this);
     }
 }

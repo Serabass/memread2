@@ -5,7 +5,7 @@ import {Byte, Float, Int32, Short, UByte} from "./native-types";
 
 export function Prop(offset: number, type: DATATYPE = null): PropertyDecorator {
     return (target: any, propKey: string | symbol): any => {
-        let props = Reflect.getMetadata('props', target);
+        let props = Reflect.getMetadata('mem:props', target);
 
         if (!type) {
             let designType = Reflect.getMetadata('design:type', target, propKey);
@@ -19,7 +19,7 @@ export function Prop(offset: number, type: DATATYPE = null): PropertyDecorator {
         }
 
         props[propKey] = {offset, type};
-        Reflect.defineMetadata('props', props, target);
+        Reflect.defineMetadata('mem:props', props, target);
     };
 }
 

@@ -113,8 +113,6 @@ export class Process {
     public write(address: number, type: DATATYPE, value: any) {
         let buffer: Buffer;
 
-        debugger;
-
         switch (type) {
             case Boolean:
                 buffer = Buffer.alloc(1);

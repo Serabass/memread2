@@ -26,8 +26,8 @@ export class Clock extends Entity {
         }
     }
 
-    @Prop(0x000A10B6B) public hour: Byte;
-    @Prop(0x000A10B92) public minute: Byte;
+    @Prop(0x6B) public hour: Byte;
+    @Prop(0x92) public minute: Byte;
     protected constructor(protected baseAddress: number = 0x0) {
         super(baseAddress);
     }
