@@ -1,3 +1,4 @@
+import * as ByteBuffer from "bytebuffer";
 import {FunctionAddress} from "./entities";
 import {kernel} from "./libs";
 import {Process} from "./Process";
@@ -7,7 +8,7 @@ const MEM_COMMIT = 0x1000;
 const PAGE_READWRITE = 0x04;
 
 export class AllocationInfo {
-    public buffer: Buffer;
+    public buffer: ByteBuffer;
 
     public offset = 0;
 
@@ -16,21 +17,22 @@ export class AllocationInfo {
     }
 
     constructor(public address: number, public size: number) {
-        this.buffer = Buffer.alloc(size);
+        debugger;
+        this.buffer = new (ByteBuffer as any)(size, true);
     }
 
-    public buf(cb: (b: Buffer, inc: (i?: number) => number) => void) {
-        cb(this.buffer, this.incOffset.bind(this));
+    public buf(cb: (b: ByteBuffer) => any) {
+        cb(this.buffer);
         return this;
     }
 
     public uInt8(value: number) {
-        this.buffer.writeUInt8(value, this.incOffset());
+        this.buffer.writeUint8(value);
         return this;
     }
 
     public int32(value: number) {
-        this.buffer.writeInt32LE(value, this.incOffset());
+        this.buffer.writeInt32(value);
         return this;
     }
 
@@ -39,77 +41,76 @@ export class AllocationInfo {
     }
 
     public pushInt32(value: number) {
-        this.buffer.writeUInt8(0x68, this.incOffset());
-        this.buffer.writeInt32LE(value, this.incOffset(4));
+        this.buffer
+            .writeUint8(0x68)
+            .writeInt32(value);
 
         return this;
     }
 
     public pushUInt8(value: number) {
-        this.buffer.writeUInt8(0x6A, this.incOffset());
-        this.buffer.writeUInt8(value, this.incOffset());
+        this.buffer
+            .writeUint8(0x6A)
+            .writeUint8(value);
 
         return this;
     }
 
     public relativeCall(fn: FunctionAddress) {
         let offsetValue = this.offset;
-        this.buffer.writeUInt8(0xE8, this.incOffset()); // relative call
         let offset = this.calculateOffset(offsetValue, fn);
-        this.buffer.writeInt32LE(offset, this.incOffset(4)); // fnAddr
+        this.buffer
+            .writeUint8(0xE8)  // relative call
+            .writeInt32(offset); // fnAddr
 
         return this;
     }
 
     public movResult(address: number) {
-        this.buffer.writeUInt8(0x89, this.incOffset());
-        this.buffer.writeUInt8(0x0D, this.incOffset()); // mov DWORD PTR ds:result
-        this.buffer.writeInt32LE(address, this.incOffset(4));
+        this.buffer
+            .writeUint8(0x89)
+            .writeUint8(0x0D) // mov DWORD PTR ds:result
+            .writeInt32(address);
 
         return this;
     }
 
     public popECX() {
-        this.buffer.writeUInt8(0x59, this.incOffset());
-
+        this.buffer.writeUint8(0x59);
         return this;
     }
 
     public pushEAX() {
-        this.buffer.writeUInt8(0x50, this.incOffset());
+        this.buffer.writeUint8(0x50);
         return this;
     }
 
     public movEcxEax() {
-        this.buffer.writeUInt8(0x89, this.incOffset());
-        this.buffer.writeUInt8(0xC1, this.incOffset());
+        this.buffer.writeUint8(0x89);
+        this.buffer.writeUint8(0xC1);
         return this;
     }
 
     public movDSToEcx(address: number) {
-        this.buffer.writeUInt8(0x8B, this.incOffset());
-        this.buffer.writeUInt8(0x0D, this.incOffset());
-        this.buffer.writeUInt32LE(address, this.incOffset(4));
+        this.buffer.writeUint8(0x8B)
+            .writeUint8(0x0D)
+            .writeUint32(address)
+        ;
         return this;
     }
 
     public movEAXOffset(offset: number) {
-        this.buffer.writeUInt8(0xA1, this.incOffset());
-        this.buffer.writeUInt32LE(offset, this.incOffset(4));
+        this.buffer
+            .writeUint8(0xA1)
+            .writeUint32(offset);
 
         return this;
     }
 
     public ret() {
-        this.buffer.writeUInt8(0xC3, this.incOffset());
-
+        this.buffer
+            .writeUint8(0xC3);
         return this;
-    }
-
-    private incOffset(value = 1) {
-        let oldValue = this.offset;
-        this.offset += value;
-        return oldValue;
     }
 }
 

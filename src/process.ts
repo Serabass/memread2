@@ -1,10 +1,10 @@
 import ref from 'ref';
 import {DATATYPE} from "./datatype";
+import {Byte, Float, Int32, Short, UByte} from "./decorators/memory/native-types";
 import {AllocationInfo} from "./injector";
 import {getProcessId, kernel, PROCESS_ALL_ACCESS} from "./libs";
 
 export class Process {
-
     public static get instance() {
         if (!this.singleton) {
             const processId = getProcessId(this.EXE);
@@ -81,23 +81,23 @@ export class Process {
 
     public writeBuffer(buffer: Buffer, address: number) {
         buffer.forEach((b, i) => {
-            this.write(address + i, 'ubyte', b);
+            this.write(address + i, UByte, b);
         });
     }
 
     public read(address: number, type: DATATYPE) {
         switch (type) {
-            case 'bool':
+            case Boolean:
                 return !!this.readByte(address);
-            case 'byte':
+            case Byte:
                 return this.readByte(address);
-            case 'ubyte':
+            case UByte:
                 return this.readUByte(address);
-            case 'short':
+            case Short:
                 return this.readShort(address);
-            case 'int':
+            case Int32:
                 return this.readInt(address);
-            case 'float':
+            case Float:
                 return this.readFloat(address);
             default:
                 debugger;
@@ -106,35 +106,37 @@ export class Process {
     }
 
     public readPointer(address: number, type: DATATYPE) {
-        let addr = +this.read(address, 'int');
+        let addr = +this.read(address, Int32);
         return this.read(addr, type);
     }
 
-    public write(address: number, type: string, value: any) {
+    public write(address: number, type: DATATYPE, value: any) {
         let buffer: Buffer;
 
+        debugger;
+
         switch (type) {
-            case 'bool':
+            case Boolean:
                 buffer = Buffer.alloc(1);
                 buffer.writeInt8(+value, 0);
                 break;
-            case 'byte':
+            case Byte:
                 buffer = Buffer.alloc(1);
                 buffer.writeInt8(value, 0);
                 break;
-            case 'ubyte':
+            case UByte:
                 buffer = Buffer.alloc(1);
                 buffer.writeUInt8(value, 0);
                 break;
-            case 'short':
+            case Short:
                 buffer = Buffer.alloc(2);
                 buffer.writeInt16LE(value, 0);
                 break;
-            case 'int':
+            case Int32:
                 buffer = Buffer.alloc(4);
                 buffer.writeInt32LE(value, 0);
                 break;
-            case 'float':
+            case Float:
                 buffer = Buffer.alloc(4);
                 buffer.writeFloatLE(value, 0);
                 break;
@@ -148,7 +150,7 @@ export class Process {
     public writeAlloc(alloc: AllocationInfo) {
         for (let i = 0; i < alloc.offset + 1; i++) {
             let b = alloc.buffer[i];
-            this.write(alloc.address + i, 'ubyte', b);
+            this.write(alloc.address + i, UByte, b);
         }
     }
 }

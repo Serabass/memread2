@@ -1,16 +1,17 @@
 import {MemoryEntity, Prop} from '../decorators';
+import {Float} from "../decorators/memory/native-types";
 import {Entity} from './entity';
 
 @MemoryEntity()
 export class Vector3d extends Entity {
-    @Prop.float(0x0)
-    public x: number;
+    @Prop(0x0)
+    public x: Float;
 
-    @Prop.float(0x4)
-    public y: number;
+    @Prop(0x4)
+    public y: Float;
 
-    @Prop.float(0x8)
-    public z: number;
+    @Prop(0x8)
+    public z: Float;
 
     constructor(protected baseAddress: number) {
         super(baseAddress);

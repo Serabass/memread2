@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import {DATATYPE} from '../../datatype';
 import {MemoryArrayPointer, MemoryPointer} from '../../pointer';
+import {Byte, Float, Int32, Short, UByte} from "./native-types";
 
 export function Prop(offset: number, type: DATATYPE = null): PropertyDecorator {
     return (target: any, propKey: string | symbol): any => {
@@ -22,12 +23,12 @@ export function Prop(offset: number, type: DATATYPE = null): PropertyDecorator {
     };
 }
 
-Prop.int = (offset: number) => Prop(offset, 'int');
-Prop.float = (offset: number) => Prop(offset, 'float');
-Prop.ubyte = (offset: number) => Prop(offset, 'ubyte');
-Prop.byte = (offset: number) => Prop(offset, 'byte');
-Prop.short = (offset: number) => Prop(offset, 'short');
-Prop.bool = (offset: number) => Prop(offset, 'bool');
+Prop.int = (offset: number) => Prop(offset, Int32);
+Prop.float = (offset: number) => Prop(offset, Float);
+Prop.ubyte = (offset: number) => Prop(offset, UByte);
+Prop.byte = (offset: number) => Prop(offset, Byte);
+Prop.short = (offset: number) => Prop(offset, Short);
+Prop.bool = (offset: number) => Prop(offset, Boolean);
 Prop.array = (offset: number, Type: any) => Prop(offset, MemoryArrayPointer.of(Type));
 Prop.pointer = (offset: number, Type: any) => Prop(offset, MemoryPointer.from(Type));
 

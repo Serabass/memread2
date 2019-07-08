@@ -3,6 +3,7 @@
 import 'reflect-metadata';
 import {MemoryArrayPointer, MemoryPointer} from '../../pointer';
 import {Process} from "../../process";
+import {Byte, Float, Int32, Short, UByte} from "./native-types";
 
 export function MemoryEntity(): ClassDecorator {
     return (target: any) => {
@@ -15,30 +16,48 @@ export function MemoryEntity(): ClassDecorator {
         Object.keys(props).forEach((key) => {
             let prop = props[key];
             Object.defineProperty(target.prototype, key, {
+                enumerable: true,
                 get() {
                     let baseAddress = this.baseAddress || 0x0;
                     let {offset, type} = prop;
                     switch (typeof type) {
                         case 'function':
-                            return new type(baseAddress + offset);
+                            let address = baseAddress + offset;
+
+                            switch (type) {
+                                case Float:
+                                case Byte:
+                                case UByte:
+                                case Int32:
+                                case Boolean:
+                                case Short:
+                                    return Process.instance.read(address, type);
+
+                                default:
+                                    debugger;
+                            }
+
+                            debugger;
+                            return new type(address);
                         case 'string':
+                            debugger;
                             return Process.instance.read(baseAddress + offset, type);
                         case 'object':
                             if (type instanceof MemoryArrayPointer) {
                                 // WRONG
                                 let result: any[] = [];
                                 let p = baseAddress + offset;
-                                let addr = Process.instance.read(p, 'int');
+                                let addr = Process.instance.read(p, Int32);
 
                                 while (addr !== 0) {
                                     result.push(new (type.cls as any)(addr as any) as any);
                                     p += 4;
-                                    addr = Process.instance.read(p, 'int');
+                                    addr = Process.instance.read(p, Int32);
                                 }
 
                                 return result;
                             } else if (type instanceof MemoryPointer) {
-                                let pointer = Process.instance.read(baseAddress + offset, 'int');
+                                let pointer = Process.instance.read(baseAddress + offset, Int32);
 
                                 if (pointer === 0) {
                                     return null;

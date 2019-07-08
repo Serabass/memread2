@@ -13,6 +13,6 @@ export class Cheat extends Entity {
         return this.singleton;
     }
 
-    @Prop.bool(0x00A10ADC) public greenLights: boolean;
-    @Prop.bool(0x00A10AB3) public weaponsForAll: boolean;
+    @Prop(0x00A10ADC) public greenLights: boolean;
+    @Prop(0x00A10AB3) public weaponsForAll: boolean;
 }

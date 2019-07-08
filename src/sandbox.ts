@@ -1,9 +1,3 @@
-import {Key} from 'ts-keycode-enum';
-import {Keyboard} from "./entities/keyboard";
-import {user32} from "./libs";
+import {Game} from "./entities";
 
-setInterval(() => {
-    if (Keyboard.keyPressed(Key.Tab)) {
-        user32.MessageBox(0, "", "", 0);
-    }
-}, 500);
+console.log(Game.instance.player.health);

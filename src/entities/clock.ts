@@ -1,4 +1,5 @@
 import {MemoryEntity, Prop} from "../decorators/memory";
+import {Byte} from "../decorators/memory/native-types";
 import {Entity} from "./entity";
 
 @MemoryEntity()
@@ -25,8 +26,8 @@ export class Clock extends Entity {
         }
     }
 
-    @Prop.byte(0x000A10B6B) public hour: number;
-    @Prop.byte(0x000A10B92) public minute: number;
+    @Prop(0x000A10B6B) public hour: Byte;
+    @Prop(0x000A10B92) public minute: Byte;
     protected constructor(protected baseAddress: number = 0x0) {
         super(baseAddress);
     }

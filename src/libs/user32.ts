@@ -1,9 +1,8 @@
 import 'reflect-metadata';
-import {Library, Method} from "../decorators/ffi/method";
+import {Library, Method, Params, Ret} from "../decorators/ffi/method";
 
 @Library({libPath: 'user32'})
 export class User32 {
-
     public static get instance() {
         if (!this.singleton) {
             this.singleton = new User32();
@@ -14,13 +13,19 @@ export class User32 {
 
     private static singleton: User32;
 
-    @Method({nativeName: 'MessageBoxW', types: ['int', ['int', 'string', 'string', 'int']]})
+    @Method({
+        nativeName: 'MessageBoxW',
+    })
+    @Params('int', 'string', 'string', 'int')
+    @Ret.int()
     public MessageBox: (hWnd: number,
                         text: string,
                         title: string,
                         type: number) => number;
 
-    @Method({types: ['short', ['int']]})
+    @Method()
+    @Params('int')
+    @Ret.short()
     public GetKeyState: (key: number) => number;
 
     constructor(path?: string) {

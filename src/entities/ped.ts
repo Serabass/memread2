@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import {MemoryEntity, Prop} from '../decorators';
+import {Byte, Float, Int32, Short} from "../decorators/memory/native-types";
 import {Injector} from "../injector";
 import {kernel, WFSO} from "../libs";
 import {Process} from "../process";
@@ -19,32 +20,32 @@ export class Ped extends Physical {
     @Prop.bool(0x140)
     public infiniteRun: boolean;
 
-    @Prop.int(0x170)
-    public readonly targetEntity: number;
+    @Prop(0x170)
+    public readonly targetEntity: Int32;
 
     @Prop.int(0x244)
     public readonly status: PedStatus;
 
-    @Prop.float(0x354)
-    public health: number;
+    @Prop(0x354)
+    public health: Float;
 
-    @Prop.float(0x358)
-    public armor: number;
+    @Prop(0x358)
+    public armor: Float;
 
-    @Prop.float(0x378)
-    public rotation: number;
+    @Prop(0x378)
+    public rotation: Float;
 
     @Prop.pointer(0x3A8, Vehicle)
     public lastControlledVehicle: Vehicle;
 
-    @Prop.bool(0x3AC)
+    @Prop(0x3AC)
     public isInVehicle: boolean;
 
-    @Prop.byte(0x504)
-    public activeWeaponSlot: number;
+    @Prop(0x504)
+    public activeWeaponSlot: Byte;
 
-    @Prop.byte(0x506)
-    public weaponAccuracy: number;
+    @Prop(0x506)
+    public weaponAccuracy: Byte;
 
     @Prop.pointer(0x508, Ped)
     public readonly targetedPed: Ped;
@@ -52,11 +53,11 @@ export class Ped extends Physical {
     @Prop.array(0x56C, Ped)
     public readonly nearestPeds: Ped[];
 
-    @Prop.short(0x594)
-    public readonly nearestPedsCount: number;
+    @Prop(0x594)
+    public readonly nearestPedsCount: Short;
 
-    @Prop.int(0x596)
-    public money: number;
+    @Prop(0x596)
+    public money: Int32;
 
     @Prop.pointer(0x5F4, Wanted)
     public wanted: Wanted;

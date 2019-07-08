@@ -2,8 +2,7 @@
 
 import arrayType from "ref-array";
 import Struct from "ref-struct";
-import {Library, Method} from "../decorators/ffi/method";
-import {Param} from "../decorators/ffi/param";
+import {Library, Method, Params, Ret} from "../decorators/ffi/method";
 import {types} from "./types";
 
 // GetProcessByName https://github.com/Zysen/node-winprocess/blob/master/winprocess.cc#L117
@@ -53,51 +52,70 @@ export class Kernel {
         return this.singleton;
     }
 
-    @Method({types: ['bool', ['int', 'int', 'pointer', 'int', 'int']]})
+    @Method()
+    @Params('int', 'int', 'pointer', 'int', 'int')
+    @Ret.bool()
     public ReadProcessMemory: (hProcess: number,
                                lpBaseAddress: number,
                                lpBuffer: Buffer,
                                dwSize: number,
-                               lpNumberOfBytesRead: any) => number;
+                               lpNumberOfBytesRead: any) => boolean;
 
-    @Method({types: ['bool', ['int', 'int', 'pointer', 'int', 'int']]})
+    @Method()
+    @Params('int', 'int', 'pointer', 'int', 'int')
+    @Ret.bool()
     public WriteProcessMemory: (hProcess: number,
                                 lpBaseAddress: number,
                                 lpBuffer: Buffer,
                                 dwSize: number,
-                                lpNumberOfBytesRead: any) => number;
+                                lpNumberOfBytesRead: any) => boolean;
 
-    @Method({types: ['int', ['int', 'bool', 'int']]})
+    @Method()
+    @Params('int', 'bool', 'int')
+    @Ret.int()
     public OpenProcess: (processAccess: number,
                          bInheritHandle: boolean,
                          processId: number) => number;
 
-    @Method({types: ['bool', ['int']]})
+    @Method()
+    @Params('int')
+    @Ret.bool()
     public CloseHandle: (handle: number) => boolean;
 
-    @Method({types: ['int', ['int', 'int']]})
+    @Method()
+    @Params('int', 'int')
+    @Ret.int()
     public CreateToolhelp32Snapshot: (dwFlags: number,
                                       th32ProcessID: any) => number;
 
-    @Method({types: ['bool', [types.DWORD, 'pointer']]})
+    @Method()
+    @Params(types.DWORD, 'pointer')
+    @Ret.bool()
     public Process32First: (hSnapshot: number,
                             lppe: any) => boolean;
 
-    @Method({types: ['bool', [types.DWORD, 'pointer']]})
+    @Method()
+    @Params(types.DWORD, 'pointer')
+    @Ret.bool()
     public Process32Next: (hSnapshot: number,
                            lppe: any) => boolean;
 
-    @Method({types: ['int', []]})
+    @Method()
+    @Ret.int()
     public GetLastError: () => number;
 
-    @Method({types: ['int', ['int', 'void *', 'ulong', 'uint', 'uint']]})
+    @Method()
+    @Params('int', 'void *', 'ulong', 'uint', 'uint')
+    @Ret.int()
     public VirtualAllocEx: (hProcess,
                             lpAddress,
                             dwSize,
                             flAllocationType,
                             flProtect) => number;
 
-    @Method({types: ['int', ['int', 'int', 'ulong', 'uint', 'int', 'uint', 'uint *']]})
+    @Method()
+    @Params('int', 'int', 'ulong', 'uint', 'int', 'uint', 'uint *')
+    @Ret.int()
     public CreateRemoteThread: (hProcess,
                                 lpThreadAttributes,
                                 dwStackSize,
@@ -106,7 +124,9 @@ export class Kernel {
                                 dwCreationFlags,
                                 lpThreadId) => number;
 
-    @Method({types: ['int', ['int', 'uint']]})
+    @Method()
+    @Params('int', 'uint')
+    @Ret.int()
     public WaitForSingleObject: (hProcess, wait) => number;
 }
 

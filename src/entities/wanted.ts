@@ -1,15 +1,16 @@
 import {MemoryEntity, Prop} from "../decorators";
+import {Byte, Int32} from "../decorators/memory/native-types";
 import {Entity} from "./entity";
 
 @MemoryEntity()
 export class Wanted extends Entity {
-    @Prop.int(0x0)
-    public chaosLevel: number;
+    @Prop(0x0)
+    public chaosLevel: Int32;
 
-    @Prop.byte(0x1E)
-    public activity: number;
+    @Prop(0x1E)
+    public activity: Byte;
 
-    @Prop.byte(0x20)
-    public readonly visible: number;
+    @Prop(0x20)
+    public readonly visible: Byte;
 
 }

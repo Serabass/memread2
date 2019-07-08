@@ -5,7 +5,7 @@ export function Param(type: string): ParameterDecorator {
         if (!data) {
             data = {
                 paramIndex,
-                type
+                type,
             };
         }
 

@@ -1,29 +1,31 @@
 import {MemoryEntity, Prop} from '../decorators';
+import {Byte, Float, Int32} from "../decorators/memory/native-types";
 import {Injector} from "../injector";
 import {kernel, WFSO} from "../libs";
 import {Process} from "../process";
+import {Ped} from './';
 import {FunctionAddress} from "./functions";
 import {Game} from './game';
-import {Ped} from './';
-import {RadioStation} from './radio-station';
 import {Physical} from './physical';
+import {RadioStation} from './radio-station';
+
 
 @MemoryEntity()
 export class Vehicle extends Physical {
-    @Prop.float(0x100)
-    public readonly speed: number;
+    @Prop(0x100)
+    public readonly speed: Float;
 
-    @Prop.float(0x160)
-    public readonly cruiseSpeed: number;
+    @Prop(0x160)
+    public readonly cruiseSpeed: Float;
 
-    @Prop.byte(0x1A0)
-    public primaryColor: number;
+    @Prop(0x1A0)
+    public primaryColor: Byte;
 
-    @Prop.byte(0x1A1)
-    public secondaryColor: number;
+    @Prop(0x1A1)
+    public secondaryColor: Byte;
 
-    @Prop.int(0x1A4)
-    public alarmDuration: number;
+    @Prop(0x1A4)
+    public alarmDuration: Int32;
 
     @Prop.pointer(0x1A8, Ped)
     public readonly driver: Ped;
@@ -31,20 +33,20 @@ export class Vehicle extends Physical {
     @Prop.array(0x1AC, Ped)
     public readonly passengers: Ped[];
 
-    @Prop.byte(0x1CC)
-    public readonly numPassengers: number;
+    @Prop(0x1CC)
+    public readonly numPassengers: Byte;
 
-    @Prop.byte(0x1D0)
-    public maxPassengers: number;
+    @Prop(0x1D0)
+    public maxPassengers: Byte;
 
-    @Prop.int(0x230)
-    public lockStatus: number;
+    @Prop(0x230)
+    public lockStatus: Int32;
 
     @Prop.int(0x23C)
     public radioStation: RadioStation;
 
-    @Prop.float(0x354)
-    public health: number;
+    @Prop(0x354)
+    public health: Float;
 
     constructor(public baseAddress: number) {
         super(baseAddress);
@@ -57,15 +59,15 @@ export class Vehicle extends Physical {
     public fix() {
         let inj = new Injector();
         let alloc = inj.alloc(100)
-            .buf((b, inc) => {
+            .buf((b) => {
                 // NEED:
                 // mov eax, ds: baseAddress
                 // mov ecx, eax
-                b.writeUInt8(0xA1, inc()); // mov eax, ds: baseAddress
-                b.writeUInt32LE(this.baseAddress, inc(4)); // mov eax, ds: baseAddress
+                b.writeUint8(0xA1); // mov eax, ds: baseAddress
+                b.writeUint32(this.baseAddress); // mov eax, ds: baseAddress
 
-                b.writeUInt8(0x89, inc()); // mov ecx, eax
-                b.writeUInt8(0xC1, inc()); // mov ecx, eax
+                b.writeUint8(0x89); // mov ecx, eax
+                b.writeUint8(0xC1); // mov ecx, eax
             })
             .relativeCall(FunctionAddress.VEHICLE_FIX)
             .ret();

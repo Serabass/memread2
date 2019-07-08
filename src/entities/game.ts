@@ -1,4 +1,5 @@
 import {MemoryEntity, Prop} from '../decorators';
+import {Byte, Float, Int32} from "../decorators/memory/native-types";
 import {Injector} from "../injector";
 import {kernel} from "../libs";
 import {Process} from "../process";
@@ -17,26 +18,26 @@ export class Game extends GameBase {
     @Prop.array(0x0094AD2C, Vehicle)
     public vehicles: Vehicle[];
 
-    @Prop.int(0x000094ADC8)
-    public money: number;
+    @Prop(0x000094ADC8)
+    public money: Int32;
 
-    @Prop.float(0x00686FC8)
-    public carDensity: number;
+    @Prop(0x00686FC8)
+    public carDensity: Float;
 
-    @Prop.float(0x0068F5F0)
-    public gravity: number;
+    @Prop(0x0068F5F0)
+    public gravity: Float;
 
-    @Prop.float(0x0097F264)
-    public timeScale: number;
+    @Prop(0x0097F264)
+    public timeScale: Float;
 
-    @Prop.byte(0x00068723B)
-    public trafficAccidents: number;
+    @Prop(0x00068723B)
+    public trafficAccidents: Byte;
 
-    @Prop.bool(0x000A10AB5)
+    @Prop(0x000A10AB5)
     public freeRespray: boolean;
 
-    @Prop.byte(0x000489D79)
-    public goodCitizenBonus: number;
+    @Prop(0x000489D79)
+    public goodCitizenBonus: Byte;
 
     protected constructor(protected baseAddress: number = 0x0) {
         super(baseAddress);
@@ -51,6 +52,7 @@ export class Game extends GameBase {
     }
 
     public spawnVehicle(modelIndex: number) {
+        debugger;
         let inj = new Injector();
         let resultAlloc = inj.alloc(4);
         let alloc = inj.alloc(100)
@@ -77,6 +79,7 @@ export class Game extends GameBase {
 
     public blowUpVehicle(addr: number) {
         let inj = new Injector();
+
         let alloc = inj.alloc(100)
             .uInt8(0xB9).int32(addr)
             .uInt8(0x8B).uInt8(0x39)
