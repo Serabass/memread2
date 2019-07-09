@@ -8,6 +8,7 @@ import {FunctionAddress} from "./functions";
 import {GameBase} from "./game-base";
 import {Player} from "./player";
 import {Vehicle} from "./vehicle";
+import {Weather} from "./weather";
 
 @MemoryEntity()
 export class Game extends GameBase {
@@ -27,6 +28,7 @@ export class Game extends GameBase {
     @Prop(0x0000A10AB5) public freeRespray: boolean;
     @Prop(0x0000489D79) public goodCitizenBonus: Byte;
 
+    @Prop.ubyte(0x000A10A42) public weather: Weather;
     @Prop(0x000A10B00) public clock: Clock;
 
     protected constructor(protected baseAddress: number = 0x0) {
@@ -114,5 +116,20 @@ export class Game extends GameBase {
             throw new Error();
         }
         return new Vehicle(res as number);
+    }
+
+    public updateWeather(weather: Weather) {
+        debugger;
+        this.weather = weather;
+
+        let inj = new Injector();
+        let alloc = inj.alloc(100)
+            .relativeCall(FunctionAddress.UPDATE_WEATHER)
+            .ret();
+
+        Process.instance.writeAlloc(alloc);
+
+        let aa = Buffer.alloc(5);
+        kernel.CreateRemoteThread(Process.instance.handle, null, 0, alloc.address, alloc.address, 0, aa);
     }
 }

@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import {DATATYPE} from '../../datatype';
+import {Ped, Vehicle} from "../../entities";
 import {MemoryArrayPointer, MemoryPointer} from '../../pointer';
 import {Byte, Float, Int32, Short, UByte} from "./native-types";
 
@@ -31,6 +32,8 @@ Prop.short = (offset: number) => Prop(offset, Short);
 Prop.bool = (offset: number) => Prop(offset, Boolean);
 Prop.array = (offset: number, Type: any) => Prop(offset, MemoryArrayPointer.of(Type));
 Prop.pointer = (offset: number, Type: any) => Prop(offset, MemoryPointer.from(Type));
+Prop.pedPointer = (offset: number) => Prop(offset, MemoryPointer.from(Ped));
+Prop.vehiclePointer = (offset: number) => Prop(offset, MemoryPointer.from(Vehicle));
 
 Prop.define = (type: any = null) => (target: any, propKey: string): any => {
     debugger;

@@ -1,5 +1,4 @@
-import {MemoryEntity, Prop} from "../decorators/memory";
-import {MODEL} from "./model";
+import {MemoryEntity} from "../decorators/memory";
 
 @MemoryEntity()
 export class Entity {
@@ -10,9 +9,6 @@ export class Entity {
     public static at(baseAddress: number = 0x00) {
         return new this(baseAddress);
     }
-
-    @Prop.ubyte(0x5C)
-    public readonly modelIndex: MODEL;
 
     constructor(protected baseAddress: number = 0x00) {
 

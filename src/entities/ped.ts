@@ -9,7 +9,7 @@ import {FunctionAddress} from "./functions";
 import {PedStatus} from "./ped-status";
 import {Vector3d} from "./vector-3d";
 import {Physical} from "./physical";
-import {Vehicle} from "./";
+import {Vehicle} from "./vehicle";
 import {Wanted} from "./wanted";
 
 @MemoryEntity()
@@ -31,7 +31,7 @@ export class Ped extends Physical {
     @Prop(0x594) public readonly nearestPedsCount: Short;
     @Prop(0x596) public money: Int32;
 
-    @Prop.pointer(0x3A8, Vehicle)
+    @Prop.vehiclePointer(0x3A8)
     public lastControlledVehicle: Vehicle;
 
     @Prop.pointer(0x508, Ped)

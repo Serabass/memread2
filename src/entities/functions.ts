@@ -5,4 +5,5 @@ export enum FunctionAddress {
     PLAYER_GET_CAR = 0x4BC1E0,
     VEHICLE_FIX = 0x588530,
     PED_DUCK = 0x512A90,
+    UPDATE_WEATHER = 0x57E040,
 }

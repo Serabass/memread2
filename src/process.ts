@@ -146,8 +146,6 @@ export class Process {
     }
 
     public writeAlloc(alloc: AllocationInfo) {
-        debugger;
-
         for (let i = 0; i < alloc.buffer.offset + 1; i++) {
             let b = alloc.buffer.buffer[i];
             this.write(alloc.address + i, UByte, b);

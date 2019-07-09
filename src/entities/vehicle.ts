@@ -3,7 +3,6 @@ import {Byte, Float, Int32} from "../decorators/memory/native-types";
 import {Injector} from "../injector";
 import {kernel, WFSO} from "../libs";
 import {Process} from "../process";
-import {Ped} from './';
 import {FunctionAddress} from "./functions";
 import {Game} from './game';
 import {Physical} from './physical';
@@ -26,11 +25,11 @@ export class Vehicle extends Physical {
     @Prop(0x1A4)
     public alarmDuration: Int32;
 
-    @Prop.pointer(0x1A8, Ped)
-    public readonly driver: Ped;
+    // @Prop.pedPointer(0x1A8)
+    // public readonly driver: Ped;
 
-    @Prop.array(0x1AC, Ped)
-    public readonly passengers: Ped[];
+    // @Prop.array(0x1AC, Ped)
+    // public readonly passengers: Ped[];
 
     @Prop(0x1CC)
     public readonly numPassengers: Byte;
@@ -44,7 +43,7 @@ export class Vehicle extends Physical {
     @Prop.int(0x23C)
     public radioStation: RadioStation;
 
-    @Prop(0x354)
+    @Prop(0x204)
     public health: Float;
 
     constructor(public baseAddress: number) {
