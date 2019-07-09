@@ -42,7 +42,6 @@ export class Game extends GameBase {
     }
 
     public spawnVehicle(modelIndex: number) {
-        debugger;
         let inj = new Injector();
         let resultAlloc = inj.alloc(4);
         let alloc = inj.alloc(100)

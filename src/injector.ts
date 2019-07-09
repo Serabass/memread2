@@ -18,7 +18,6 @@ export class AllocationInfo {
     }
 
     constructor(public address: number, public size: number, public injector: Injector) {
-        debugger;
         this.buffer = new (ByteBuffer as any)(size, true);
     }
 
@@ -62,7 +61,7 @@ export class AllocationInfo {
     }
 
     public relativeCall(fn: FunctionAddress) {
-        let offsetValue = this.offset;
+        let offsetValue = this.buffer.offset;
         let offset = this.calculateOffset(offsetValue, fn);
         this.buffer
             .writeUint8(0xE8)  // relative call
