@@ -11,7 +11,8 @@
     "test": "jest",
     "lint": "tslint --project tslint.json",
     "test-watch": "jest --watch",
-    "watch": "nodemon -w bin -w src -e ts -x ts-node bin/sandbox.ts"
+    "watch": "nodemon -w bin -w src -e ts -x ts-node bin/sandbox.ts",
+    "w:ui": "nodemon -w bin -w src -e ts -x ts-node bin/ui.ts"
   },
   "dependencies": {
     "@types/inquirer": "^7.3.0",

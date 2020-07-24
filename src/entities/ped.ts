@@ -178,8 +178,8 @@ export class Ped extends Physical {
     @Prop.memArray(0x408, Weapon, 10, 0x018)
     public readonly weapons: Weapon[];
 
-    @Prop(0x594)
-    public readonly nearestPedsCount: Short;
+    @Prop.short(0x594)
+    public readonly nearestPedsCount: number;
 
     @Prop.pointer(0x5F4, Wanted)
     public wanted: Wanted;
