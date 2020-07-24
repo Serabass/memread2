@@ -1,7 +1,8 @@
-import {Game, PedStatus, Weather} from "../src/entities";
-import {Process} from "../src/process";
-import cliui from 'cliui';
 import chalk from 'chalk';
+import cliui from 'cliui';
+import {Game, PedStatus, Weather} from "../src/entities";
+import {Key} from "../src/libs/Keys";
+import {Process} from "../src/process";
 
 const ui = cliui({width: 40});
 
@@ -25,13 +26,30 @@ setInterval(() => {
     ui.div(`WEAPON: ${player.activeWeaponSlot}`);
     ui.div('');
     if (player.isInVehicle) {
-        ui.div(` 🚗   ${(player.lastControlledVehicle.speed as number * 100).toFixed(2)} m/h`, `${player.lastControlledVehicle.health.toFixed(2)}`);
+        let car = player.lastControlledVehicle;
+        ui.div(` == 🚗 == `);
+        ui.div(` ${(car.speed as number * 100).toFixed(2)} m/h`, `${car.health.toFixed(2)}`);
+        ui.div(` Siren: ${chalk.green(car.siren)}`);
+        ui.div(` Horn: ${chalk.green(car.horn)}`);
+        ui.div(` == 🚗 == `);
+        ui.div('');
     }
     ui.div(`${PedStatus[player.status]}`);
     ui.div(`${player.weapons.length}`);
     ui.div('');
     ui.div(`${player.position.toString()}`);
+    ui.div(`${Key.tab}`);
+
     console.log(ui.toString());
+
+    if (Key.tab) {
+        game.money++;
+    }
+
+    if (Key.shift) {
+        game.weather = Weather.ExtraSunny;
+        game.clock.time = '12:00';
+    }
 }, 100);
 
 // Process.instance.close();

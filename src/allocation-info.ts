@@ -1,4 +1,4 @@
-import * as ByteBuffer from "bytebuffer";
+import ByteBuffer from "bytebuffer";
 import {FunctionAddress} from "./entities";
 import {Injector} from "./injector";
 

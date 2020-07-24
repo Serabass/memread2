@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import {Library, Method, Params, Ret} from "../decorators/ffi/method";
+import {Keys} from "./Keys";
 
 @Library({libPath: 'user32'})
 export class User32 {
@@ -26,7 +27,11 @@ export class User32 {
     @Method()
     @Params('int')
     @Ret.short()
-    public GetKeyState: (key: number) => number;
+    public GetKeyState: (key: Keys) => number;
+
+    public KeyPressed(key: Keys) {
+        return this.GetKeyState(key) < 0;
+    }
 
     constructor(path?: string) {
     }

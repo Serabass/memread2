@@ -54,6 +54,9 @@ export class Vehicle extends Physical {
     @Prop(0x245, Boolean)
     public siren: boolean;
 
+    @Prop(0x240, Boolean)
+    public horn: boolean;
+
     @Prop(0x1A4)
     public alarmDuration: Int32;
 
@@ -124,7 +127,8 @@ export class Ped extends Physical {
     @Prop.int(0x244) public readonly status: PedStatus;
 
     @Prop(0x140) public infiniteRun: boolean;
-    @Prop(0x354) public health: Float;
+    @Prop(0x141) public fastShoot: boolean;
+    @Prop(0x354, Float) public health: number;
     @Prop(0x358) public armor: Float;
     @Prop(0x378) public rotation: Float;
     @Prop(0x3AC) public isInVehicle: boolean;
@@ -141,7 +145,7 @@ export class Ped extends Physical {
     @Prop.array(0x56C, Ped)
     public readonly nearestPeds: Ped[];
 
-    @Prop.array(0x408, Weapon)
+    @Prop.memArray(0x408, Weapon, 10, 0x018)
     public readonly weapons: Weapon[];
 
     @Prop(0x594)
@@ -254,7 +258,7 @@ export class Game extends GameBase {
     @Prop.array(0x0094AD2C, Vehicle)
     public vehicles: Vehicle[];
 
-    @Prop(0x000094ADC8) public money: Int32;
+    @Prop(0x000094ADC8, Int32) public money: number;
     @Prop(0x0000686FC8) public carDensity: Float;
     @Prop(0x000068F5F0) public gravity: Float;
     @Prop(0x000097F264) public timeScale: Float;

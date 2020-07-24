@@ -1,7 +1,7 @@
 import 'reflect-metadata';
 import {DATATYPE} from '../../datatype';
 import {Ped, Vehicle} from "../../entities";
-import {MemoryArrayPointer, MemoryPointer} from '../../pointer';
+import {MemoryArray, MemoryArrayPointer, MemoryPointer} from '../../pointer';
 import {Byte, Float, Int32, Short, UByte} from "./native-types";
 
 export function Prop(offset: number, type: DATATYPE = null): PropertyDecorator {
@@ -31,6 +31,7 @@ Prop.byte = (offset: number) => Prop(offset, Byte);
 Prop.short = (offset: number) => Prop(offset, Short);
 Prop.bool = (offset: number) => Prop(offset, Boolean);
 Prop.array = (offset: number, Type: any) => Prop(offset, MemoryArrayPointer.of(Type));
+Prop.memArray = (offset: number, Type: any, count: number, size: number) => Prop(offset, MemoryArray.of(Type, count, size));
 Prop.pointer = (offset: number, Type: any) => Prop(offset, MemoryPointer.from(Type));
 Prop.pedPointer = (offset: number) => Prop(offset, MemoryPointer.from(Ped));
 Prop.vehiclePointer = (offset: number) => Prop(offset, MemoryPointer.from(Vehicle));

@@ -1,8 +1,8 @@
 // https://stackoverflow.com/questions/28795242/injecting-only-function-and-running-it-through-createremotethread-c
 // http://www.cyberforum.ru/csharp-beginners/thread1974282.html
 import 'reflect-metadata';
-import {Entity} from "../../entities";
-import {MemoryArrayPointer, MemoryPointer} from '../../pointer';
+import {Entity, Weapon} from "../../entities";
+import {MemoryArray, MemoryArrayPointer, MemoryPointer} from '../../pointer';
 import {Process} from "../../process";
 import {Byte, Float, Int32, Short, UByte} from "./native-types";
 
@@ -52,6 +52,20 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
                                     result.push(new (type.cls as any)(addr as any) as any);
                                     p += 4;
                                     addr = Process.instance.readInt(p);
+                                }
+
+                                return result;
+                            };
+                        } else if (type instanceof MemoryArray) {
+                            return function(this: any) {
+                                let t = type as MemoryArray;
+                                let baseAddress = this.baseAddress || 0x00;
+                                let result: any[] = [];
+
+                                for (let i = 0; i < t.count; i++) {
+                                    let p = baseAddress + offset + (i * t.size);
+                                    let w = new Weapon(p);
+                                    result.push(w);
                                 }
 
                                 return result;
