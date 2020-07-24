@@ -121,7 +121,7 @@ export class Process {
         kernel.WriteProcessMemory(this.handle, address, buffer, buffer.length, 0);
     }
 
-    public writeBuffer(buffer: Buffer, address: number) {
+    public writeBuffer(address: number, buffer: Buffer) {
         buffer.forEach((b, i) => {
             this.write(address + i, UByte, b);
         });

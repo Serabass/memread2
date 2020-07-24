@@ -65,6 +65,37 @@ export class Weapon extends Entity {
 
 @MemoryEntity()
 export class Vehicle extends Physical {
+
+    public static spawn(modelIndex: number) {
+        let inj = new Injector(Process.instance);
+        let resultAlloc = inj.alloc(4);
+        let alloc = inj.alloc(20)
+            .pushInt32(modelIndex)
+            .relativeCall(FunctionAddress.SPAWN_VEHICLE)
+            .movResult(resultAlloc.address)
+            .popECX()
+            .ret();
+
+        Process.instance.writeAlloc(alloc);
+
+        let aa = Buffer.alloc(5);
+
+        kernel.CreateRemoteThread(Process.instance.handle, null,
+            0, alloc.address, alloc.address, 0, aa);
+
+        kernel.WaitForSingleObject(Process.instance.handle, WFSO.WAIT_TIMEOUT);
+
+        let res = Process.instance.readInt(resultAlloc.address);
+
+        if (typeof res !== 'number') {
+            throw new Error();
+        }
+
+        alloc.zeroRemote();
+
+        return new Vehicle(res);
+    }
+
     @Prop(0x100, Float)
     public speed: number;
 
@@ -82,6 +113,12 @@ export class Vehicle extends Physical {
 
     @Prop(0x240, Boolean)
     public horn: boolean;
+
+    @Prop.byte(0x2B0)
+    public lightStatus: number;
+
+    @Prop.byte(0x5C5)
+    public wheelsOnGround: number;
 
     @Prop(0x1A4)
     public alarmDuration: Int32;
@@ -125,8 +162,12 @@ export class Vehicle extends Physical {
     @Prop.byte(0x29C)
     public type: VehicleType;
 
+    @Prop.byte(0x501)
+    public specialProps: number;
+
     @Prop.byte(0x5CC)
     public carBurnout: number;
+
     constructor(public baseAddress: number) {
         super(baseAddress);
     }
@@ -160,6 +201,28 @@ export class Vehicle extends Physical {
         kernel.WaitForSingleObject(Process.instance.handle, WFSO.WAIT_TIMEOUT);
 
         return;
+    }
+
+    public blowUp(): void {
+        let inj = new Injector(Process.instance);
+
+        let alloc = inj.alloc(16)
+            .uInt8(0xB9).int32(this.baseAddress)
+            .uInt8(0x8B).uInt8(0x39)
+            .pushUInt8(0x00)
+            .relativeCall(FunctionAddress.BLOWUP_VEHICLE)
+            .ret()
+        ;
+        Process.instance.writeAlloc(alloc);
+
+        let aa = Buffer.alloc(5);
+        kernel.CreateRemoteThread(Process.instance.handle, null,
+            0, alloc.address, alloc.address, 0, aa);
+
+        kernel.WaitForSingleObject(Process.instance.handle, WFSO.WAIT_TIMEOUT);
+
+        alloc.zeroRemote();
+
     }
 }
 
@@ -331,50 +394,8 @@ export class Game extends GameBase {
         return this.singleton;
     }
 
-    public spawnVehicle(modelIndex: number) {
-        let inj = new Injector();
-        let resultAlloc = inj.alloc(4);
-        let alloc = inj.alloc(100)
-            .pushInt32(modelIndex)
-            .relativeCall(FunctionAddress.SPAWN_VEHICLE)
-            .movResult(resultAlloc.address)
-            .popECX()
-            .ret();
-
-        Process.instance.writeAlloc(alloc);
-
-        let aa = Buffer.alloc(5);
-        kernel.CreateRemoteThread(Process.instance.handle, null,
-            0, alloc.address, alloc.address, 0, aa);
-        let res = Process.instance.read(resultAlloc.address, Int32);
-        let res2 = Process.instance.read(res as number, Int32);
-
-        if (typeof res !== 'number') {
-            throw new Error();
-        }
-
-        return new Vehicle(res as number);
-    }
-
-    public blowUpVehicle(addr: number) {
-        let inj = new Injector();
-
-        let alloc = inj.alloc(100)
-            .uInt8(0xB9).int32(addr)
-            .uInt8(0x8B).uInt8(0x39)
-            .pushUInt8(0x00)
-            .relativeCall(FunctionAddress.BLOWUP_VEHICLE)
-            .ret()
-        ;
-        Process.instance.writeAlloc(alloc);
-
-        let aa = Buffer.alloc(5);
-        kernel.CreateRemoteThread(Process.instance.handle, null,
-            0, alloc.address, alloc.address, 0, aa);
-    }
-
     public helpMessage(text: string) {
-        let inj = new Injector();
+        let inj = new Injector(Process.instance);
         let stringAlloc = inj.alloc(10);
         let resultAlloc = inj.alloc(4);
 
@@ -382,17 +403,23 @@ export class Game extends GameBase {
         kernel.WriteProcessMemory(Process.instance.handle, stringAlloc.address,
             buf, buf.length, 0);
 
+        debugger;
+
         let alloc = inj.alloc(100)
-            // .movEAXOffset(stringAlloc.address)
+            .movECXOffset(0x0094B220)
+            .movDSOffset__Sandbox(0x00A10942, 0x20)
             .pushUInt8(0)
-            .pushUInt8(0)
-            .pushUInt8(0)
-            // .pushEAX()
+            .pushUInt8(1)
+            .pushOffset(stringAlloc.address)
+            .relativeCall(FunctionAddress.PREPARE_HELP_MESSAGE)
+            .pushEAX()
             .relativeCall(FunctionAddress.SET_HELP_MESSAGE)
             .ret()
         ;
 
         Process.instance.writeAlloc(alloc);
+
+        debugger;
 
         let aa = Buffer.alloc(5);
         kernel.CreateRemoteThread(Process.instance.handle, null,

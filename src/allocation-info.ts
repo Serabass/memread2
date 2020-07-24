@@ -85,6 +85,13 @@ export class AllocationInfo {
         return this;
     }
 
+    public pushOffset(addr: number) {
+        this.buffer
+            .writeUint8(0x68)
+            .writeUint32(addr);
+        return this;
+    }
+
     public movEcxEax() {
         this.buffer.writeUint8(0x89);
         this.buffer.writeUint8(0xC1);
@@ -107,6 +114,24 @@ export class AllocationInfo {
         return this;
     }
 
+    public movDSOffset__Sandbox(offset: number, value: number) {
+        this.buffer
+            .writeUint8(0xC6)
+            .writeUint8(0x05)
+            .writeUint32(offset)
+            .writeUint8(value);
+
+        return this;
+    }
+
+    public movECXOffset(offset: number) {
+        this.buffer
+            .writeUint8(0xB9)
+            .writeUint32(offset);
+
+        return this;
+    }
+
     public ret() {
         this.buffer
             .writeUint8(0xC3);
@@ -116,5 +141,11 @@ export class AllocationInfo {
     public write() {
         this.injector.process.writeAlloc(this);
         return this;
+    }
+
+    public zeroRemote() {
+        let b = Buffer.alloc(this.size);
+        b.fill(0);
+        this.injector.process.writeBuffer(this.address, b);
     }
 }

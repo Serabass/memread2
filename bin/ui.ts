@@ -36,6 +36,7 @@ setInterval(() => {
     ui.div(`${player.position.toString()}`);
     ui.div(`Can be damaged: ${player.canBeDamaged}`);
 
+
     if (player.isInVehicle) {
         let car = player.lastControlledVehicle;
         ui.div(` |  == 🚗 == `);
@@ -47,6 +48,7 @@ setInterval(() => {
         ui.div(` |  Type: ${VehicleType[car.type]}`);
         ui.div(` |  Mass: ${car.mass}`);
         ui.div(` |  Burnout: ${car.carBurnout}`);
+        ui.div(` |  specialProps: ${car.specialProps.toString(2)}`);
         ui.div(` |  == 🚗 == `);
         ui.div(' | ');
 
