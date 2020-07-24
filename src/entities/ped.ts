@@ -18,6 +18,22 @@ import {Wanted} from "./wanted";
 import {Weather} from "./weather";
 import {WheelStates} from './wheels';
 
+export enum DamageType {
+    Unarmed = 0,
+    NightStick = 4,
+    COLT45 = 17,
+    SNIPERRIFLE = 28,
+    FLAMETHROWER = 31,
+    RAMMEDBYCAR = 39,
+    RUNOVERBYCAR = 40,
+    EXPLOSION = 41,
+    UZI_DRIVEBY = 42,
+    DROWNING = 43,
+    FALL = 44,
+    ANYMELEE = 46,
+    ANYWEAPON = 47,
+}
+
 export enum VehicleType {
     general,
     boat,
@@ -109,6 +125,8 @@ export class Vehicle extends Physical {
     @Prop.byte(0x29C)
     public type: VehicleType;
 
+    @Prop.byte(0x5CC)
+    public carBurnout: number;
     constructor(public baseAddress: number) {
         super(baseAddress);
     }
@@ -155,7 +173,7 @@ export class Ped extends Physical {
     @Prop.int(0x244) public readonly status: PedStatus;
 
     @Prop(0x140) public infiniteRun: boolean;
-    @Prop(0x141) public fastShoot: boolean;
+    @Prop(0x141, Boolean) public fastShoot: boolean;
     @Prop.float(0x354) public health: number;
     @Prop(0x358) public armor: Float;
     @Prop(0x378) public rotation: Float;
@@ -163,7 +181,9 @@ export class Ped extends Physical {
     @Prop(0x504) public activeWeaponSlot: Byte;
     @Prop(0x506) public weaponAccuracy: Byte;
     @Prop(0x596) public money: Int32;
+    @Prop.byte(0x598) public lastDamageType: DamageType;
     @Prop(0x52C, Float) public torsoRotation: number;
+    @Prop.pointer(0x59C, Ped) public lastDamagedBy: Ped;
     @Prop(0x63D, Boolean) public canBeDamaged: boolean;
 
     @Prop.pointer(0x3A8, Vehicle)
