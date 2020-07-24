@@ -1,5 +1,6 @@
 export * from './vehicle';
 export * from './automobile';
+export * from './clock';
 export * from './cheat';
 export * from './entity';
 export * from './functions';
@@ -15,3 +16,4 @@ export * from './police';
 export * from './radio-station';
 export * from './vector-3d';
 export * from './wanted';
+export * from './weather';

@@ -20,7 +20,6 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
                 switch (typeof type) {
                     case 'function':
                         return function(this: any) {
-                            debugger;
                             let baseAddress = this.baseAddress || 0x00;
                             let address = baseAddress + offset;
 
@@ -66,7 +65,7 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
                                     return null;
                                 }
 
-                                console.log('DEBUG:', key, prop);
+                                console.log(type)
                                 return type.cls.at(pointer as any);
                             };
                         }

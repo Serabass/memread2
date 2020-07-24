@@ -1,7 +1,8 @@
 // https://stackoverflow.com/questions/28795242/injecting-only-function-and-running-it-through-createremotethread-c
 // http://www.cyberforum.ru/csharp-beginners/thread1974282.html
 import 'reflect-metadata';
-import {AllocationInfo, Injector} from "../../injector";
+import {AllocationInfo} from "../../allocation-info";
+import {Injector} from "../../injector";
 import {kernel, WFSO} from "../../libs";
 import {Process} from "../../process";
 

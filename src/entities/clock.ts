@@ -4,6 +4,19 @@ import {Entity} from "./entity";
 
 @MemoryEntity()
 export class Clock extends Entity {
+    @Prop(0x6B) public hour: Byte;
+    @Prop(0x92) public minute: Byte;
+
+    public static singleton: Clock;
+
+    public static get instance() {
+        if (!this.singleton) {
+            this.singleton = new Clock();
+        }
+
+        return this.singleton;
+    }
+
     public get time(): string {
         let h = this.hour;
         let m = this.minute;
@@ -26,8 +39,6 @@ export class Clock extends Entity {
         }
     }
 
-    @Prop(0x6B) public hour: Byte;
-    @Prop(0x92) public minute: Byte;
     protected constructor(protected baseAddress: number = 0x0) {
         super(baseAddress);
     }

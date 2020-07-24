@@ -1,4 +1,4 @@
-import Game from "../src/entities/game";
+import {Game} from "../src/entities";
 
 describe('lib test', () => {
     it('x', () => {

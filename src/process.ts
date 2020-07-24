@@ -1,10 +1,16 @@
 import ref from 'ref';
+import {AllocationInfo} from "./allocation-info";
 import {DATATYPE} from "./datatype";
 import {Byte, Float, Int32, Short, UByte} from "./decorators/memory/native-types";
-import {AllocationInfo} from "./injector";
-import {getProcessId, kernel, PROCESS_ALL_ACCESS} from "./libs";
+import {getProcessId, kernel, ProcessAccessFlags} from "./libs";
 
+/**
+ * Управление процессом
+ */
 export class Process {
+    /**
+     * Синглтон
+     */
     public static get instance() {
         if (!this.singleton) {
             const processId = getProcessId(this.EXE);
@@ -13,40 +19,61 @@ export class Process {
             }
 
             this.singleton = new Process(processId);
-            this.singleton.open();
         }
         return this.singleton;
     }
 
-    public static factory(pid: number) {
-        return new Process(pid);
-    }
+    /**
+     * Синглтон
+     */
+    protected static singleton: Process;
 
-    private static singleton: Process;
-
+    /**
+     * Имя Exe-файла
+     */
     private static EXE: string = 'gta-vc.exe';
+
+    /**
+     * Хендл процесса
+     */
     public handle: number;
 
     public constructor(private pid: number) {
     }
 
+    /**
+     * Открыть найденный процесс для управления
+     */
     public open() {
-        this.handle = kernel.OpenProcess(PROCESS_ALL_ACCESS, false, this.pid);
+        this.handle = kernel.OpenProcess(ProcessAccessFlags.All, false, this.pid);
         return this;
     }
 
+    /**
+     * Закрываем хендл процесса
+     */
     public close() {
         kernel.CloseHandle(this.handle);
         return this;
     }
 
-    public readByte(address: number) {
+    /**
+     * Читаем байт по указанному адресу
+     *
+     * @param address
+     */
+    public readByte(address: number): Byte {
         let type = ref.types.int8;
         let buf = ref.alloc(type);
         kernel.ReadProcessMemory(this.handle, address, buf, type.size, 0);
         return buf.readInt8(0);
     }
 
+    /**
+     * Читаем беззнаковый байт по указанному адресу
+     *
+     * @param address
+     */
     public readUByte(address: number) {
         let type = ref.types.int8;
         let buf = ref.alloc(type);
@@ -54,6 +81,11 @@ export class Process {
         return buf.readUInt8(0);
     }
 
+    /**
+     * Читаем двухбайтовое число по указанному адресу
+     *
+     * @param address
+     */
     public readShort(address: number) {
         let type = ref.types.int16;
         let buf = ref.alloc(type);
@@ -61,6 +93,11 @@ export class Process {
         return buf.readInt16BE(0);
     }
 
+    /**
+     * Читаем четырёхбайтовое число по указанному адресу
+     *
+     * @param address
+     */
     public readInt(address: number) {
         let type = ref.types.int32;
         let buf = ref.alloc(type);
@@ -68,6 +105,11 @@ export class Process {
         return buf.readInt32LE(0);
     }
 
+    /**
+     * Читаем флоат по указанному адресу
+     *
+     * @param address
+     */
     public readFloat(address: number) {
         let type = ref.types.float;
         let buf = ref.alloc(type);
@@ -106,7 +148,8 @@ export class Process {
     }
 
     public readPointer(address: number, type: DATATYPE) {
-        let addr = +this.read(address, Int32);
+        let addr = this.readInt(address);
+        console.log(addr);
         return this.read(addr, type);
     }
 

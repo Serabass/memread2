@@ -7,6 +7,22 @@ import {types} from "./types";
 
 // GetProcessByName https://github.com/Zysen/node-winprocess/blob/master/winprocess.cc#L117
 
+export enum ProcessAccessFlags {
+    All = 0x001F0FFF,
+    Terminate = 0x00000001,
+    CreateThread = 0x00000002,
+    VirtualMemoryOperation = 0x00000008,
+    VirtualMemoryRead = 0x00000010,
+    VirtualMemoryWrite = 0x00000020,
+    DuplicateHandle = 0x00000040,
+    CreateProcess = 0x000000080,
+    SetQuota = 0x00000100,
+    SetInformation = 0x00000200,
+    QueryInformation = 0x00000400,
+    QueryLimitedInformation = 0x00001000,
+    Synchronize = 0x00100000
+}
+
 export let PROCESSENTRY32 = new Struct({
     dwSize: types.DWORD,
     cntUsage: types.DWORD,
@@ -34,8 +50,6 @@ export enum WFSO {
     WAIT_OBJECT_0 = 0x00000000,
     WAIT_TIMEOUT = 0x00000102,
 }
-
-export const PROCESS_ALL_ACCESS = 0x1fffff;
 
 /**
  * TODO Implement VirtualFreeEx method

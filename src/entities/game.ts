@@ -6,9 +6,7 @@ import {Process} from "../process";
 import {Clock} from "./clock";
 import {FunctionAddress} from "./functions";
 import {GameBase} from "./game-base";
-import {Player} from "./player";
-import {Vehicle} from "./vehicle";
-import {Weather} from "./weather";
+import {Player, Weather, Vehicle} from "./";
 
 @MemoryEntity()
 export class Game extends GameBase {

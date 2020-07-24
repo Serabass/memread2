@@ -9,7 +9,7 @@ import {FunctionAddress} from "./functions";
 import {PedStatus} from "./ped-status";
 import {Vector3d} from "./vector-3d";
 import {Physical} from "./physical";
-import {Vehicle} from "./vehicle";
+import {Vehicle} from "./";
 import {Wanted} from "./wanted";
 
 @MemoryEntity()
@@ -28,10 +28,9 @@ export class Ped extends Physical {
     @Prop(0x3AC) public isInVehicle: boolean;
     @Prop(0x504) public activeWeaponSlot: Byte;
     @Prop(0x506) public weaponAccuracy: Byte;
-    @Prop(0x594) public readonly nearestPedsCount: Short;
     @Prop(0x596) public money: Int32;
 
-    @Prop.vehiclePointer(0x3A8)
+    @Prop.pointer(0x3A8, Vehicle)
     public lastControlledVehicle: Vehicle;
 
     @Prop.pointer(0x508, Ped)
@@ -40,11 +39,18 @@ export class Ped extends Physical {
     @Prop.array(0x56C, Ped)
     public readonly nearestPeds: Ped[];
 
+    @Prop(0x594)
+    public readonly nearestPedsCount: Short;
+
     @Prop.pointer(0x5F4, Wanted)
     public wanted: Wanted;
 
     @Prop(0x638, Drunkenness)
     public drunkenness: Drunkenness;
+
+    constructor(protected baseAddress: number) {
+        super(baseAddress);
+    }
 
     public duck() {
         let inj = new Injector();
@@ -70,10 +76,6 @@ export class Ped extends Physical {
         }
 
         return res;
-    }
-
-    constructor(protected baseAddress: number) {
-        super(baseAddress);
     }
 
     public kill() {
