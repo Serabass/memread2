@@ -15,6 +15,7 @@ Process.instance.open();
 let game = Game.instance;
 game.clock.time = '12:00'
 let player = game.player;
+
 setInterval(() => {
     clear();
     ui.resetOutput();
@@ -23,14 +24,15 @@ setInterval(() => {
     ui.div(`A ${chalk.gray(player.armor.toFixed(2))}`, `H ${chalk.red(player.health.toFixed(2))}`, '');
     ui.div(player.wanted.stars);
     ui.div('');
-    ui.div(`WEAPON: ${player.activeWeaponSlot}`);
+    ui.div(` 🔪 : ${player.activeWeaponSlot}`);
     ui.div('');
     if (player.isInVehicle) {
         let car = player.lastControlledVehicle;
         ui.div(` == 🚗 == `);
         ui.div(` ${(car.speed as number * 100).toFixed(2)} m/h`, `${car.health.toFixed(2)}`);
-        ui.div(` Siren: ${chalk.green(car.siren)}`);
-        ui.div(` Horn: ${chalk.green(car.horn)}`);
+        ui.div(` Siren: ${(car.siren ? '🗸' : '')}`);
+        ui.div(` Horn: ${(car.horn ? '🗸' : '')}`);
+
         ui.div(` == 🚗 == `);
         ui.div('');
     }
@@ -38,12 +40,18 @@ setInterval(() => {
     ui.div(`${player.weapons.length}`);
     ui.div('');
     ui.div(`${player.position.toString()}`);
+    ui.div(`Can be damaged: ${player.canBeDamaged}`);
     ui.div(`${Key.tab}`);
+
+    for (let p of player.nearestPeds) {
+        p.health = 100;
+        p.armor = 100;
+    }
 
     console.log(ui.toString());
 
     if (Key.tab) {
-        game.money++;
+        player.canBeDamaged = !player.canBeDamaged;
     }
 
     if (Key.shift) {

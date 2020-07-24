@@ -16,6 +16,7 @@ import {Physical} from "./physical";
 // import {Vehicle} from "./";
 import {Wanted} from "./wanted";
 import {Weather} from "./weather";
+import { WheelStates } from './wheels';
 
 @MemoryEntity()
 export class Weapon extends Entity {
@@ -81,6 +82,9 @@ export class Vehicle extends Physical {
     @Prop(0x204)
     public health: Float;
 
+    @Prop(0x2A4, WheelStates)
+    public wheelStates: WheelStates;
+
     constructor(public baseAddress: number) {
         super(baseAddress);
     }
@@ -128,13 +132,15 @@ export class Ped extends Physical {
 
     @Prop(0x140) public infiniteRun: boolean;
     @Prop(0x141) public fastShoot: boolean;
-    @Prop(0x354, Float) public health: number;
+    @Prop.float(0x354) public health: number;
     @Prop(0x358) public armor: Float;
     @Prop(0x378) public rotation: Float;
     @Prop(0x3AC) public isInVehicle: boolean;
     @Prop(0x504) public activeWeaponSlot: Byte;
     @Prop(0x506) public weaponAccuracy: Byte;
     @Prop(0x596) public money: Int32;
+    @Prop(0x52C, Float) public torsoRotation: number;
+    @Prop(0x63D, Boolean) public canBeDamaged: boolean;
 
     @Prop.pointer(0x3A8, Vehicle)
     public lastControlledVehicle: Vehicle;

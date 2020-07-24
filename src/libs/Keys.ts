@@ -284,4 +284,5 @@ function KeyPressed(key: Keys): PropertyDecorator {
 export class Key {
     @KeyPressed(Keys.VK_TAB) public static tab: boolean;
     @KeyPressed(Keys.VK_SHIFT) public static shift: boolean;
+    @KeyPressed(Keys.VK_CONTROL) public static ctrl: boolean;
 }
