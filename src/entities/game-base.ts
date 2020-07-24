@@ -13,7 +13,7 @@ export abstract class GameBase extends Entity {
         let entity = +Process.instance.read(addr, Int32);
 
         while (entity !== 0) {
-            result.push(new Vehicle(entity));
+            result.push(Vehicle.at(entity));
             addr += 4;
             entity = +Process.instance.readPointer(addr, Int32);
         }

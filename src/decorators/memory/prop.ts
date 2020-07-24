@@ -2,9 +2,9 @@ import 'reflect-metadata';
 import {DATATYPE} from '../../datatype';
 import {Ped, Vehicle} from "../../entities";
 import {MemoryArray, MemoryArrayPointer, MemoryPointer} from '../../pointer';
-import {Byte, Float, Int32, Short, UByte} from "./native-types";
+import {Byte, Float, Int32, Short, UByte, Bit} from "./native-types";
 
-export function Prop(offset: number, type: DATATYPE = null): PropertyDecorator {
+export function Prop(offset: number, type: DATATYPE = null, meta: any = {}): PropertyDecorator {
     return (target: any, propKey: string | symbol): any => {
         let props = Reflect.getMetadata('mem:props', target);
 
@@ -19,7 +19,7 @@ export function Prop(offset: number, type: DATATYPE = null): PropertyDecorator {
             props = {};
         }
 
-        props[propKey] = {offset, type};
+        props[propKey] = {offset, type, meta};
         Reflect.defineMetadata('mem:props', props, target);
     };
 }
@@ -27,6 +27,7 @@ export function Prop(offset: number, type: DATATYPE = null): PropertyDecorator {
 Prop.int = (offset: number) => Prop(offset, Int32);
 Prop.float = (offset: number) => Prop(offset, Float);
 Prop.ubyte = (offset: number) => Prop(offset, UByte);
+Prop.bit = (offset: number, bitIndex: number) => Prop(offset, Bit, {bitIndex});
 Prop.byte = (offset: number) => Prop(offset, Byte);
 Prop.short = (offset: number) => Prop(offset, Short);
 Prop.bool = (offset: number) => Prop(offset, Boolean);

@@ -1,5 +1,6 @@
 export enum MODEL {
     NULL = 0,
+
     COP = 1,
     SWAT = 2,
     FBI = 3,
@@ -7,6 +8,7 @@ export enum MODEL {
     MEDIC = 5,
     FIREMAN = 6,
     MALE01 = 7,
+
     HFYST = 9,
     HFOST = 10,
     HMYST = 11,
@@ -81,6 +83,7 @@ export enum MODEL {
     WFOSH = 80,
     JFOTO = 81,
     JMOTO = 82,
+
     CBA = 83,
     CBB = 84,
     HNA = 85,
@@ -95,6 +98,7 @@ export enum MODEL {
     BKB = 94,
     PGA = 95,
     PGB = 96,
+
     VICE1 = 97,
     VICE2 = 98,
     VICE3 = 99,
@@ -103,8 +107,10 @@ export enum MODEL {
     VICE6 = 102,
     VICE7 = 103,
     VICE8 = 104,
+
     WFYG1 = 105,
     WFYG2 = 106,
+
     SPECIAL01 = 109,
     SPECIAL02 = 110,
     SPECIAL03 = 111,
@@ -126,6 +132,7 @@ export enum MODEL {
     SPECIAL19 = 127,
     SPECIAL20 = 128,
     SPECIAL21 = 129,
+
     LANDSTAL = 130,
     IDAHO = 131,
     STINGER = 132,
@@ -233,6 +240,7 @@ export enum MODEL {
     BLOODRA = 234,
     BLOODRB = 235,
     VICECHEE = 236,
+
     WHEEL_RIM = 237,
     WHEEL_OFFROAD = 238,
     WHEEL_TRUCK = 239,
@@ -243,7 +251,9 @@ export enum MODEL {
     WHEEL_ALLOY = 254,
     WHEEL_LIGHTTRUCK = 255,
     WHEEL_SMALLCAR = 256,
+
     AIRTRAIN_VLO = 257,
+
     CELLPHONE = 258,
     BRASSKNUCKLE = 259,
     SCREWDRIVER = 260,
@@ -280,6 +290,7 @@ export enum MODEL {
     BOMB = 291,
     CAMERA = 292,
     FINGERS = 293,
+
     MINIGUN2 = 294,
     CUTOBJ01 = 295,
     CUTOBJ02 = 296,

@@ -13,10 +13,13 @@ import {PedStatus} from "./ped-status";
 import {RadioStation} from "./radio-station";
 import {Vector3d} from "./vector-3d";
 import {Physical} from "./physical";
-// import {Vehicle} from "./";
 import {Wanted} from "./wanted";
 import {Weather} from "./weather";
 import {WheelStates} from './wheels';
+
+export interface Jsonable {
+    toJSON(): any;
+}
 
 export enum DamageType {
     Unarmed = 0,
@@ -44,23 +47,70 @@ export enum VehicleType {
 }
 
 @MemoryEntity()
-export class Weapon extends Entity {
-    @Prop.int(0x00)
-    public type: Int32;
+export class Mouse extends Entity implements Jsonable {
+    @Prop.bool(0x00) public lmb: boolean;
+    @Prop.bool(0x01) public rmb: boolean;
+    @Prop.bool(0x02) public mmb: boolean;
+    @Prop.bool(0x03) public wheelDown: boolean;
+    @Prop.bool(0x04) public wheelUp: boolean;
+    @Prop.float(0x08) public x: number;
+    @Prop.float(0x0C) public y: number;
 
-    @Prop.int(0x04)
-    public status: Int32;
+    public static at(baseAddress: number) {
+        return new Mouse(baseAddress);
+    }
 
-    @Prop.int(0x08)
-    public clip: number;
-
-    @Prop.int(0x0C)
-    public ammo: number;
-
-    constructor(public baseAddress: number) {
+    protected constructor(protected baseAddress: number) {
         super(baseAddress);
     }
 
+    toJSON(): any {
+        return {
+            lmb: this.lmb,
+            rmb: this.rmb,
+            mmb: this.mmb,
+            wheelDown: this.wheelDown,
+            wheelUp: this.wheelUp,
+            x: this.x,
+            y: this.y,
+        };
+    }
+}
+
+@MemoryEntity()
+export class Weapon extends Entity {
+    @Prop.int(0x00) public type: number;
+    @Prop.int(0x04) public status: number;
+    @Prop.int(0x08) public clip: number;
+    @Prop.int(0x0C) public ammo: number;
+
+    public static at(baseAddress: number) {
+        return new Weapon(baseAddress);
+    }
+
+    protected constructor(public baseAddress: number) {
+        super(baseAddress);
+    }
+
+}
+
+@MemoryEntity()
+export class VehicleSpecialProps extends Entity {
+    @Prop.byte(0x0) public byteValue: number;
+    @Prop.bit(0x0, 0) public taxiLight: boolean;
+    @Prop.bit(0x0, 1) public notSprayable: boolean;
+    @Prop.bit(0x0, 3) public watertight: boolean;
+    @Prop.bit(0x0, 4) public upsideDownNotDamaged: boolean;
+    @Prop.bit(0x0, 5) public bitMoreResistantToPhysicalDamage: boolean;
+    @Prop.bit(0x0, 6) public tankDetonateCars: boolean;
+
+    public static at(baseAddress: number) {
+        return new VehicleSpecialProps(baseAddress);
+    }
+
+    protected constructor(public baseAddress: number) {
+        super(baseAddress);
+    }
 }
 
 @MemoryEntity()
@@ -93,10 +143,10 @@ export class Vehicle extends Physical {
 
         alloc.zeroRemote();
 
-        return new Vehicle(res);
+        return Vehicle.at(res);
     }
 
-    @Prop(0x100, Float)
+    @Prop.float(0x100)
     public speed: number;
 
     @Prop(0x160)
@@ -153,8 +203,8 @@ export class Vehicle extends Physical {
     @Prop.int(0x23C)
     public radioStation: RadioStation;
 
-    @Prop(0x204)
-    public health: Float;
+    @Prop.float(0x204)
+    public health: number;
 
     @Prop(0x2A4, WheelStates)
     public wheelStates: WheelStates;
@@ -162,13 +212,17 @@ export class Vehicle extends Physical {
     @Prop.byte(0x29C)
     public type: VehicleType;
 
-    @Prop.byte(0x501)
-    public specialProps: number;
+    @Prop(0x501, VehicleSpecialProps)
+    public specialProps: VehicleSpecialProps;
 
     @Prop.byte(0x5CC)
     public carBurnout: number;
 
-    constructor(public baseAddress: number) {
+    public static at(baseAddress: number) {
+        return new Vehicle(baseAddress);
+    }
+
+    protected constructor(public baseAddress: number) {
         super(baseAddress);
     }
 
@@ -227,6 +281,19 @@ export class Vehicle extends Physical {
 }
 
 @MemoryEntity()
+export class PedFlags1 extends Entity {
+    @Prop.bit(0x0, 4) public isCrouching: boolean;
+
+    public static at(baseAddress: number) {
+        return new PedFlags1(baseAddress);
+    }
+
+    protected constructor(public baseAddress: number) {
+        super(baseAddress);
+    }
+}
+
+@MemoryEntity()
 export class Ped extends Physical {
     @Prop(0x34, Vector3d)
     public position: Vector3d;
@@ -237,6 +304,10 @@ export class Ped extends Physical {
 
     @Prop(0x140) public infiniteRun: boolean;
     @Prop(0x141, Boolean) public fastShoot: boolean;
+
+    @Prop(0x150, PedFlags1) public flags1: PedFlags1; // Move to separate class with 0x0 bit offsets
+
+    @Prop.bit(0x14D, 5) public runWalkStyle: boolean;
     @Prop.float(0x354) public health: number;
     @Prop(0x358) public armor: Float;
     @Prop(0x378) public rotation: Float;
@@ -270,7 +341,11 @@ export class Ped extends Physical {
     @Prop(0x638, Drunkenness)
     public drunkenness: Drunkenness;
 
-    constructor(protected baseAddress: number) {
+    public static at(baseAddress: number) {
+        return new Ped(baseAddress);
+    }
+
+    protected constructor(protected baseAddress: number) {
         super(baseAddress);
     }
 
@@ -357,7 +432,7 @@ export class Player extends Ped {
             throw new Error();
         }
 
-        return new Vehicle(res as number);
+        return Vehicle.at(res as number);
     }
 }
 
@@ -371,16 +446,18 @@ export class Game extends GameBase {
     @Prop.array(0x0094AD2C, Vehicle)
     public vehicles: Vehicle[];
 
-    @Prop(0x000094ADC8, Int32) public money: number;
-    @Prop(0x0000686FC8) public carDensity: Float;
-    @Prop(0x000068F5F0) public gravity: Float;
-    @Prop(0x000097F264) public timeScale: Float;
-    @Prop(0x000068723B) public trafficAccidents: Byte;
+    @Prop.int(0x000094ADC8) public money: number;
+    @Prop.float(0x0000686FC8) public carDensity: number;
+    @Prop.float(0x000068F5F0) public gravity: number;
+    @Prop.float(0x000097F264) public timeScale: number;
+    @Prop.byte(0x000068723B) public trafficAccidents: number;
     @Prop(0x0000A10AB5) public freeRespray: boolean;
-    @Prop(0x0000489D79) public goodCitizenBonus: Byte;
+    @Prop.int(0x0000489D78) public goodCitizenBonus: number;
 
     @Prop.ubyte(0x000A10A42) public weather: Weather;
     @Prop(0x000A10B00) public clock: Clock;
+
+    @Prop(0x936908, Mouse) public mouse: Mouse;
 
     protected constructor(protected baseAddress: number = 0x0) {
         super(baseAddress);
@@ -395,6 +472,10 @@ export class Game extends GameBase {
     }
 
     public helpMessage(text: string) {
+
+        // TODO Напомню, что здесь нужно заранее прописывать массив GXT-строк с ключами в память.
+        // TODO Так было сделано в SCMMod
+
         let inj = new Injector(Process.instance);
         let stringAlloc = inj.alloc(10);
         let resultAlloc = inj.alloc(4);
@@ -430,7 +511,7 @@ export class Game extends GameBase {
         if (typeof res !== 'number') {
             throw new Error();
         }
-        return new Vehicle(res as number);
+        return Vehicle.at(res as number);
     }
 
     public updateWeather(weather: Weather) {

@@ -12,3 +12,6 @@ export class UByte extends Number {
 
 export class Short extends Number {
 }
+
+export class Bit extends Boolean {
+}

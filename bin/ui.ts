@@ -48,7 +48,7 @@ setInterval(() => {
         ui.div(` |  Type: ${VehicleType[car.type]}`);
         ui.div(` |  Mass: ${car.mass}`);
         ui.div(` |  Burnout: ${car.carBurnout}`);
-        ui.div(` |  specialProps: ${car.specialProps.toString(2)}`);
+        ui.div(` |  specialProps: ${car.specialProps.byteValue}`);
         ui.div(` |  == 🚗 == `);
         ui.div(' | ');
 
@@ -56,6 +56,10 @@ setInterval(() => {
             car.collisionPower++;
         }
     }
+
+    ui.div('');
+    // ui.div(`Sandbox: ${player.nearestPeds.map(p => p.isCrouching)}`);
+    ui.div(`Sandbox: ${player.flags1.isCrouching}`);
 
     for (let p of player.nearestPeds) {
         p.health = 100;

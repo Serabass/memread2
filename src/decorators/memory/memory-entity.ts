@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import {Entity, Weapon} from "../../entities";
 import {MemoryArray, MemoryArrayPointer, MemoryPointer} from '../../pointer';
 import {Process} from "../../process";
-import {Byte, Float, Int32, Short, UByte} from "./native-types";
+import {Bit, Byte, Float, Int32, Short, UByte} from "./native-types";
 
 export function MemoryEntity<T extends Entity>(): ClassDecorator {
     return (target: any) => {
@@ -15,7 +15,7 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
         }
 
         Object.entries(props).forEach(([key, prop]: any[]) => {
-            let {offset, type} = prop;
+            let {offset, type, meta} = prop;
             let get: any = (() => {
                 switch (typeof type) {
                     case 'function':
@@ -32,6 +32,9 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
                                 case Short:
                                     return Process.instance.read(address, type);
 
+                                case Bit:
+                                    let val = Process.instance.read(address, Byte) as number;
+                                    return !!((val >> meta.bitIndex) & 7);
                                 default:
                                     debugger;
                             }
@@ -64,7 +67,7 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
 
                                 for (let i = 0; i < t.count; i++) {
                                     let p = baseAddress + offset + (i * t.size);
-                                    let w = new Weapon(p);
+                                    let w = Weapon.at(p);
                                     result.push(w);
                                 }
 
@@ -74,6 +77,8 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
                             return function(this: any) {
                                 let baseAddress = this.baseAddress || 0x00;
                                 let pointer = Process.instance.read(baseAddress + offset, Int32);
+
+                                debugger;
 
                                 if (pointer === 0) {
                                     return null;
