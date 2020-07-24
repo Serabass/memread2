@@ -1,4 +1,4 @@
-import {Game} from "../src/entities";
+import {Game, Weather} from "../src/entities";
 import {Process} from "../src/process";
 import cliui from 'cliui';
 import chalk from 'chalk';
@@ -10,18 +10,21 @@ function clear() {
 }
 
 Process.instance.open();
-let player = Game.instance.player;
+let game = Game.instance;
+let player = game.player;
 setInterval(() => {
-    // clear();
+    clear();
     ui.resetOutput();
 
-    ui.div(Game.instance.clock.time, chalk.green(`$${Game.instance.money.toString().padStart(8, '0')}`))
-    ui.div(`A ${chalk.gray(player.armor.toFixed(2))}`, `H ${chalk.red(player.health.toFixed(2))}`)
+    ui.div(game.clock.time, chalk.green(`$${game.money.toString().padStart(8, '0')}`), `${Weather[game.weather]}`)
+    ui.div(`A ${chalk.gray(player.armor.toFixed(2))}`, `H ${chalk.red(player.health.toFixed(2))}`, '')
     ui.div('');
     ui.div(player.wanted.stars);
     ui.div('');
-    ui.div(player.lastControlledVehicle);
+    ui.div(`${player.activeWeaponSlot}`);
+    ui.div('');
+    ui.div(`${player.position.toString()}`);
     console.log(ui.toString());
-}, 1000);
+}, 100);
 
 // Process.instance.close();

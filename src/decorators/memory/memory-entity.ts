@@ -65,7 +65,6 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
                                     return null;
                                 }
 
-                                console.log(type)
                                 return type.cls.at(pointer as any);
                             };
                         }
