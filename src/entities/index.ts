@@ -1,4 +1,4 @@
-export * from './vehicle';
+
 export * from './automobile';
 export * from './clock';
 export * from './cheat';

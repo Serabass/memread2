@@ -4,85 +4,37 @@ import {Byte, Float, Int32, Short} from "../decorators/memory/native-types";
 import {Injector} from "../injector";
 import {kernel, WFSO} from "../libs";
 import {Process} from "../process";
+import {Clock} from "./clock";
 import {Drunkenness} from "./drunkenness";
+import {Entity} from "./entity";
 import {FunctionAddress} from "./functions";
-import {Game} from "./game";
+import {GameBase} from "./game-base";
 import {PedStatus} from "./ped-status";
 import {RadioStation} from "./radio-station";
 import {Vector3d} from "./vector-3d";
 import {Physical} from "./physical";
 // import {Vehicle} from "./";
 import {Wanted} from "./wanted";
+import {Weather} from "./weather";
 
 @MemoryEntity()
-export class Ped extends Physical {
-    @Prop(0x34, Vector3d)
-    public position: Vector3d;
+export class Weapon extends Entity {
+    @Prop.int(0x00)
+    public type: Int32;
 
-    @Prop(0x170) public readonly targetEntity: Int32;
+    @Prop.int(0x04)
+    public status: Int32;
 
-    @Prop.int(0x244) public readonly status: PedStatus;
+    @Prop.int(0x08)
+    public clip: number;
 
-    @Prop(0x140) public infiniteRun: boolean;
-    @Prop(0x354) public health: Float;
-    @Prop(0x358) public armor: Float;
-    @Prop(0x378) public rotation: Float;
-    @Prop(0x3AC) public isInVehicle: boolean;
-    @Prop(0x504) public activeWeaponSlot: Byte;
-    @Prop(0x506) public weaponAccuracy: Byte;
-    @Prop(0x596) public money: Int32;
+    @Prop.int(0x0C)
+    public ammo: number;
 
-    // @Prop.pointer(0x3A8, Vehicle)
-    // public lastControlledVehicle: Vehicle;
-
-    @Prop.pointer(0x508, Ped)
-    public readonly targetedPed: Ped;
-
-    @Prop.array(0x56C, Ped)
-    public readonly nearestPeds: Ped[];
-
-    @Prop(0x594)
-    public readonly nearestPedsCount: Short;
-
-    @Prop.pointer(0x5F4, Wanted)
-    public wanted: Wanted;
-
-    @Prop(0x638, Drunkenness)
-    public drunkenness: Drunkenness;
-
-    constructor(protected baseAddress: number) {
+    constructor(public baseAddress: number) {
         super(baseAddress);
     }
 
-    public duck() {
-        let inj = new Injector();
-        let resultAlloc = inj.alloc(4);
-        let alloc = inj.alloc(100)
-            .movDSToEcx(this.baseAddress)
-            .relativeCall(FunctionAddress.PED_DUCK)
-            .ret();
-
-        Process.instance.writeAlloc(alloc);
-
-        let aa = Buffer.alloc(5);
-        let thread = kernel.CreateRemoteThread(Process.instance.handle, null,
-            0, alloc.address, alloc.address, 0, aa);
-
-        kernel.WaitForSingleObject(Process.instance.handle, WFSO.WAIT_TIMEOUT);
-
-        let res = Process.instance.read(resultAlloc.address, Int32);
-        let res2 = Process.instance.read(res as number, Int32);
-
-        if (typeof res !== 'number') {
-            throw new Error();
-        }
-
-        return res;
-    }
-
-    public kill() {
-        this.health = 0;
-    }
 }
 
 @MemoryEntity()
@@ -98,6 +50,9 @@ export class Vehicle extends Physical {
 
     @Prop(0x1A1)
     public secondaryColor: Byte;
+
+    @Prop(0x245, Boolean)
+    public siren: boolean;
 
     @Prop(0x1A4)
     public alarmDuration: Int32;
@@ -160,6 +115,80 @@ export class Vehicle extends Physical {
 }
 
 @MemoryEntity()
+export class Ped extends Physical {
+    @Prop(0x34, Vector3d)
+    public position: Vector3d;
+
+    @Prop(0x170) public readonly targetEntity: Int32;
+
+    @Prop.int(0x244) public readonly status: PedStatus;
+
+    @Prop(0x140) public infiniteRun: boolean;
+    @Prop(0x354) public health: Float;
+    @Prop(0x358) public armor: Float;
+    @Prop(0x378) public rotation: Float;
+    @Prop(0x3AC) public isInVehicle: boolean;
+    @Prop(0x504) public activeWeaponSlot: Byte;
+    @Prop(0x506) public weaponAccuracy: Byte;
+    @Prop(0x596) public money: Int32;
+
+    @Prop.pointer(0x3A8, Vehicle)
+    public lastControlledVehicle: Vehicle;
+
+    @Prop.pointer(0x508, Ped)
+    public readonly targetedPed: Ped;
+
+    @Prop.array(0x56C, Ped)
+    public readonly nearestPeds: Ped[];
+
+    @Prop.array(0x408, Weapon)
+    public readonly weapons: Weapon[];
+
+    @Prop(0x594)
+    public readonly nearestPedsCount: Short;
+
+    @Prop.pointer(0x5F4, Wanted)
+    public wanted: Wanted;
+
+    @Prop(0x638, Drunkenness)
+    public drunkenness: Drunkenness;
+
+    constructor(protected baseAddress: number) {
+        super(baseAddress);
+    }
+
+    public duck() {
+        let inj = new Injector();
+        let resultAlloc = inj.alloc(4);
+        let alloc = inj.alloc(100)
+            .movDSToEcx(this.baseAddress)
+            .relativeCall(FunctionAddress.PED_DUCK)
+            .ret();
+
+        Process.instance.writeAlloc(alloc);
+
+        let aa = Buffer.alloc(5);
+        let thread = kernel.CreateRemoteThread(Process.instance.handle, null,
+            0, alloc.address, alloc.address, 0, aa);
+
+        kernel.WaitForSingleObject(Process.instance.handle, WFSO.WAIT_TIMEOUT);
+
+        let res = Process.instance.read(resultAlloc.address, Int32);
+        let res2 = Process.instance.read(res as number, Int32);
+
+        if (typeof res !== 'number') {
+            throw new Error();
+        }
+
+        return res;
+    }
+
+    public kill() {
+        this.health = 0;
+    }
+}
+
+@MemoryEntity()
 export class Player extends Ped {
 
     public static get instance() {
@@ -212,5 +241,129 @@ export class Player extends Ped {
         }
 
         return new Vehicle(res as number);
+    }
+}
+
+@MemoryEntity()
+export class Game extends GameBase {
+    public static singleton: Game;
+
+    @Prop.pointer(0x94AD28, Player)
+    public player: Player;
+
+    @Prop.array(0x0094AD2C, Vehicle)
+    public vehicles: Vehicle[];
+
+    @Prop(0x000094ADC8) public money: Int32;
+    @Prop(0x0000686FC8) public carDensity: Float;
+    @Prop(0x000068F5F0) public gravity: Float;
+    @Prop(0x000097F264) public timeScale: Float;
+    @Prop(0x000068723B) public trafficAccidents: Byte;
+    @Prop(0x0000A10AB5) public freeRespray: boolean;
+    @Prop(0x0000489D79) public goodCitizenBonus: Byte;
+
+    @Prop.ubyte(0x000A10A42) public weather: Weather;
+    @Prop(0x000A10B00) public clock: Clock;
+
+    protected constructor(protected baseAddress: number = 0x0) {
+        super(baseAddress);
+    }
+
+    public static get instance() {
+        if (!this.singleton) {
+            this.singleton = new Game();
+        }
+
+        return this.singleton;
+    }
+
+    public spawnVehicle(modelIndex: number) {
+        let inj = new Injector();
+        let resultAlloc = inj.alloc(4);
+        let alloc = inj.alloc(100)
+            .pushInt32(modelIndex)
+            .relativeCall(FunctionAddress.SPAWN_VEHICLE)
+            .movResult(resultAlloc.address)
+            .popECX()
+            .ret();
+
+        Process.instance.writeAlloc(alloc);
+
+        let aa = Buffer.alloc(5);
+        kernel.CreateRemoteThread(Process.instance.handle, null,
+            0, alloc.address, alloc.address, 0, aa);
+        let res = Process.instance.read(resultAlloc.address, Int32);
+        let res2 = Process.instance.read(res as number, Int32);
+
+        if (typeof res !== 'number') {
+            throw new Error();
+        }
+
+        return new Vehicle(res as number);
+    }
+
+    public blowUpVehicle(addr: number) {
+        let inj = new Injector();
+
+        let alloc = inj.alloc(100)
+            .uInt8(0xB9).int32(addr)
+            .uInt8(0x8B).uInt8(0x39)
+            .pushUInt8(0x00)
+            .relativeCall(FunctionAddress.BLOWUP_VEHICLE)
+            .ret()
+        ;
+        Process.instance.writeAlloc(alloc);
+
+        let aa = Buffer.alloc(5);
+        kernel.CreateRemoteThread(Process.instance.handle, null,
+            0, alloc.address, alloc.address, 0, aa);
+    }
+
+    public helpMessage(text: string) {
+        let inj = new Injector();
+        let stringAlloc = inj.alloc(10);
+        let resultAlloc = inj.alloc(4);
+
+        let buf = Buffer.from(text, 'utf-8');
+        kernel.WriteProcessMemory(Process.instance.handle, stringAlloc.address,
+            buf, buf.length, 0);
+
+        let alloc = inj.alloc(100)
+            // .movEAXOffset(stringAlloc.address)
+            .pushUInt8(0)
+            .pushUInt8(0)
+            .pushUInt8(0)
+            // .pushEAX()
+            .relativeCall(FunctionAddress.SET_HELP_MESSAGE)
+            .ret()
+        ;
+
+        Process.instance.writeAlloc(alloc);
+
+        let aa = Buffer.alloc(5);
+        kernel.CreateRemoteThread(Process.instance.handle, null,
+            0, alloc.address, alloc.address, 0, aa);
+        let res = Process.instance.read(resultAlloc.address, Int32);
+        let res2 = Process.instance.read(res as number, Int32);
+
+        if (typeof res !== 'number') {
+            throw new Error();
+        }
+        return new Vehicle(res as number);
+    }
+
+    public updateWeather(weather: Weather) {
+        debugger;
+        this.weather = weather;
+
+        let inj = new Injector();
+        let alloc = inj.alloc(100)
+            .relativeCall(FunctionAddress.UPDATE_WEATHER)
+            .ret();
+
+        Process.instance.writeAlloc(alloc);
+
+        let aa = Buffer.alloc(5);
+        kernel.CreateRemoteThread(Process.instance.handle, null, 0, alloc.address, alloc.address, 0, aa);
     }
 }

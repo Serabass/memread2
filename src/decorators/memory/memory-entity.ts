@@ -46,12 +46,12 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
                                 // WRONG
                                 let result: any[] = [];
                                 let p = baseAddress + offset;
-                                let addr = Process.instance.read(p, Int32);
+                                let addr = Process.instance.readInt(p);
 
                                 while (addr !== 0) {
                                     result.push(new (type.cls as any)(addr as any) as any);
                                     p += 4;
-                                    addr = Process.instance.read(p, Int32);
+                                    addr = Process.instance.readInt(p);
                                 }
 
                                 return result;

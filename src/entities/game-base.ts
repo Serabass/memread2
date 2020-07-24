@@ -1,7 +1,7 @@
 import {Int32} from "../decorators/memory/native-types";
 import {Process} from "../process";
 import {Entity} from './entity';
-import {Vehicle} from './vehicle';
+import {Vehicle} from './ped';
 
 const VEHICLES_ADDR = 0xA0FDE4;
 
