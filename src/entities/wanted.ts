@@ -6,8 +6,8 @@ import {Entity} from "./entity";
 
 @MemoryEntity()
 export class Wanted extends Entity {
-    @Prop(0x0)
-    public chaosLevel: Int32;
+    @Prop.int(0x0)
+    public chaosLevel: number;
 
     @Prop(0x1E)
     public activity: Byte;

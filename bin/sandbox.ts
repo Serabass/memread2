@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 import cliui from 'cliui';
-import {Game, PedStatus, Weather} from "../src/entities";
+import {Game, PedStatus, RadioStation, VehicleType, Weather} from "../src/entities";
 import {Key} from "../src/libs/Keys";
 import {Process} from "../src/process";
 
@@ -13,7 +13,7 @@ function clear() {
 
 Process.instance.open();
 let game = Game.instance;
-game.clock.time = '12:00'
+game.clock.time = '12:00';
 let player = game.player;
 
 setInterval(() => {
@@ -26,22 +26,31 @@ setInterval(() => {
     ui.div('');
     ui.div(` 🔪 : ${player.activeWeaponSlot}`);
     ui.div('');
+
     if (player.isInVehicle) {
         let car = player.lastControlledVehicle;
         ui.div(` == 🚗 == `);
         ui.div(` ${(car.speed as number * 100).toFixed(2)} m/h`, `${car.health.toFixed(2)}`);
         ui.div(` Siren: ${(car.siren ? '🗸' : '')}`);
         ui.div(` Horn: ${(car.horn ? '🗸' : '')}`);
-
+        ui.div(` Accelerator Pedal: ${car.acceleratorPedal}`);
+        ui.div(` Radio: ${RadioStation[car.radioStation]}`);
+        ui.div(` Type: ${VehicleType[car.type]}`);
+        ui.div(` Mass: ${car.mass}`);
+        ui.div(` collisionPower: ${car.collisionPower}`);
         ui.div(` == 🚗 == `);
         ui.div('');
+
+        if (Key.ctrl) {
+            car.collisionPower++;
+        }
     }
+
     ui.div(`${PedStatus[player.status]}`);
     ui.div(`${player.weapons.length}`);
     ui.div('');
     ui.div(`${player.position.toString()}`);
     ui.div(`Can be damaged: ${player.canBeDamaged}`);
-    ui.div(`${Key.tab}`);
 
     for (let p of player.nearestPeds) {
         p.health = 100;

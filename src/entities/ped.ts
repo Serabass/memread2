@@ -16,7 +16,16 @@ import {Physical} from "./physical";
 // import {Vehicle} from "./";
 import {Wanted} from "./wanted";
 import {Weather} from "./weather";
-import { WheelStates } from './wheels';
+import {WheelStates} from './wheels';
+
+export enum VehicleType {
+    general,
+    boat,
+    train,
+    NPCpoliceHelicopter,
+    NPCplane,
+    bike,
+}
 
 @MemoryEntity()
 export class Weapon extends Entity {
@@ -40,8 +49,8 @@ export class Weapon extends Entity {
 
 @MemoryEntity()
 export class Vehicle extends Physical {
-    @Prop(0x100)
-    public readonly speed: Float;
+    @Prop(0x100, Float)
+    public speed: number;
 
     @Prop(0x160)
     public readonly cruiseSpeed: Float;
@@ -73,6 +82,18 @@ export class Vehicle extends Physical {
     @Prop(0x1D0)
     public maxPassengers: Byte;
 
+    @Prop.float(0x1E8)
+    public steerAngle1: number;
+
+    @Prop.float(0x1EC)
+    public steerAngle2: number;
+
+    @Prop(0x1F0, Float)
+    public acceleratorPedal: Float;
+
+    @Prop(0x1F4, Float)
+    public brakePedal: Float;
+
     @Prop(0x230)
     public lockStatus: Int32;
 
@@ -84,6 +105,9 @@ export class Vehicle extends Physical {
 
     @Prop(0x2A4, WheelStates)
     public wheelStates: WheelStates;
+
+    @Prop.byte(0x29C)
+    public type: VehicleType;
 
     constructor(public baseAddress: number) {
         super(baseAddress);

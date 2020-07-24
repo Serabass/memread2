@@ -11,4 +11,10 @@ export class Physical extends Entity {
 
     @Prop.ubyte(0x5C)
     public readonly modelIndex: MODEL;
+
+    @Prop.float(0x0B8)
+    public mass: number;
+
+    @Prop.float(0x104)
+    public collisionPower: number;
 }
