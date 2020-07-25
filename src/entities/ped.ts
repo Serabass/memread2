@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import {MemoryEntity, Prop, RemoteFunction} from '../decorators';
-import {Byte, Float, Int32, Short} from "../decorators/memory/native-types";
+import {Byte, Float, Int32} from "../decorators/memory/native-types";
 import {Injector} from "../injector";
 import {kernel, WFSO} from "../libs";
 import {Process} from "../process";
@@ -10,12 +10,17 @@ import {Entity} from "./entity";
 import {FunctionAddress} from "./functions";
 import {GameBase} from "./game-base";
 import {PedStatus} from "./ped-status";
+import {Physical} from "./physical";
 import {RadioStation} from "./radio-station";
 import {Vector3d} from "./vector-3d";
-import {Physical} from "./physical";
+import {VehicleColors} from "./vehicle-colors";
 import {Wanted} from "./wanted";
 import {Weather} from "./weather";
 import {WheelStates} from './wheels';
+
+function hex(...args: any[]) {
+    console.log(...args.map(a => a.toString(16)));
+}
 
 export interface Jsonable {
     toJSON(): any;
@@ -60,7 +65,7 @@ export class Mouse extends Entity implements Jsonable {
         return new Mouse(baseAddress);
     }
 
-    protected constructor(protected baseAddress: number) {
+    protected constructor(public baseAddress: number) {
         super(baseAddress);
     }
 
@@ -152,16 +157,16 @@ export class Vehicle extends Physical {
     @Prop(0x160)
     public readonly cruiseSpeed: Float;
 
-    @Prop(0x1A0)
-    public primaryColor: Byte;
+    @Prop.mem(0x1A0, VehicleColors)
+    public colors: VehicleColors;
 
     @Prop(0x1A1)
     public secondaryColor: Byte;
 
-    @Prop(0x245, Boolean)
+    @Prop.bool(0x245)
     public siren: boolean;
 
-    @Prop(0x240, Boolean)
+    @Prop.bool(0x240)
     public horn: boolean;
 
     @Prop.byte(0x2B0)
@@ -342,11 +347,15 @@ export class Ped extends Physical {
     @Prop(0x638, Drunkenness)
     public drunkenness: Drunkenness;
 
+    public static byIndex(index: number) {
+
+    }
+
     public static at(baseAddress: number) {
         return new Ped(baseAddress);
     }
 
-    protected constructor(protected baseAddress: number) {
+    protected constructor(public baseAddress: number) {
         super(baseAddress);
     }
 
@@ -391,7 +400,7 @@ export class Player extends Ped {
     public static findCoords(): any {
         let i = new Injector(Process.instance);
         let resultAlloc = i.alloc(4);
-        let bytes =  i
+        let bytes = i
             .alloc(100)
             .relativeCall(FunctionAddress.PLAYER_GET_CAR)
             .movEcxEax()
@@ -414,7 +423,7 @@ export class Player extends Ped {
     })
     private _fixCar: () => void;
 
-    constructor(protected baseAddress: number) {
+    constructor(public baseAddress: number) {
         super(baseAddress);
     }
 
@@ -457,6 +466,10 @@ export interface IVector3D {
     z: number;
 }
 
+export interface IVector3DA extends IVector3D {
+    a: number;
+}
+
 @MemoryEntity()
 export class Game extends GameBase {
     public static singleton: Game;
@@ -483,7 +496,7 @@ export class Game extends GameBase {
 
     @Prop(0x936908, Mouse) public mouse: Mouse;
 
-    protected constructor(protected baseAddress: number = 0x0) {
+    protected constructor(public baseAddress: number = 0x0) {
         super(baseAddress);
     }
 
@@ -553,14 +566,52 @@ export class Game extends GameBase {
         kernel.CreateRemoteThread(Process.instance.handle, null, 0, alloc.address, alloc.address, 0, aa);
     }
 
-    public createCab(sourcePos: IVector3D, dropOffPos: IVector3D) {
+    public createCab(sourcePos: IVector3DA, dropOffPos: IVector3DA) {
         let inj = new Injector(Process.instance);
+        let src = inj.alloc(20)
+            .buf(b => {
+                b.writeFloat(sourcePos.a);
+                b.writeFloat(sourcePos.z);
+                b.writeFloat(sourcePos.y);
+                b.writeFloat(sourcePos.x);
+            });
+        Process.instance.writeAlloc(src);
+        let dropOff = inj.alloc(20)
+            .buf(b => {
+                b.writeFloat(dropOffPos.a);
+                b.writeFloat(dropOffPos.z);
+                b.writeFloat(dropOffPos.y);
+                b.writeFloat(dropOffPos.x);
+            });
+        Process.instance.writeAlloc(dropOff);
 
         let alloc = inj.alloc(100)
+            .fldDS(dropOff.address + 4 * 0)
+            .fldDS(dropOff.address + 4 * 1)
+            .fldDS(dropOff.address + 4 * 2)
+            .fldDS(dropOff.address + 4 * 3)
+
+            .fldDS(src.address + 4 * 0)
+            .fldDS(src.address + 4 * 1)
+            .fldDS(src.address + 4 * 2)
+            .fldDS(src.address + 4 * 3)
+
+            .relativeCall(FunctionAddress.CREATE_TAXI_CAB)
             .ret()
         ;
 
         Process.instance.writeAlloc(alloc);
 
+        debugger;
+
+        let aa = Buffer.alloc(5);
+        kernel.CreateRemoteThread(Process.instance.handle, null,
+            0, alloc.address, alloc.address, 0, aa);
+
+        kernel.WaitForSingleObject(Process.instance.handle, WFSO.WAIT_TIMEOUT);
+
+        src.zeroRemote();
+        dropOff.zeroRemote();
+        alloc.zeroRemote();
     }
 }

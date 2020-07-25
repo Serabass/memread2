@@ -133,6 +133,15 @@ export class AllocationInfo {
         return this;
     }
 
+    public fldDS(offset: number) {
+        this.buffer
+            .writeUint8(0xD9)
+            .writeUint8(0x05)
+            .writeUint32(offset);
+
+        return this;
+    }
+
     public ret() {
         this.buffer
             .writeUint8(0xC3);

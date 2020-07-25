@@ -13,7 +13,7 @@ export class Vector3d extends Entity {
     @Prop(0x8)
     public z: Float;
 
-    constructor(protected baseAddress: number) {
+    constructor(public baseAddress: number) {
         super(baseAddress);
     }
 

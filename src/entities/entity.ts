@@ -10,7 +10,7 @@ export class Entity {
         return new this(baseAddress);
     }
 
-    constructor(protected baseAddress: number = 0x00) {
+    constructor(public baseAddress: number = 0x00) {
 
     }
 

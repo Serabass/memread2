@@ -39,7 +39,7 @@ export class Clock extends Entity {
         }
     }
 
-    protected constructor(protected baseAddress: number = 0x0) {
+    protected constructor(public baseAddress: number = 0x0) {
         super(baseAddress);
     }
 

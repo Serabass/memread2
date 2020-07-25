@@ -1,6 +1,7 @@
 import chalk from 'chalk';
 import cliui from 'cliui';
-import {Game, MODEL, RadioStation, VehicleType, Weather} from "../src/entities";
+import {Game, MODEL, Ped, RadioStation, VehicleType, Weather} from "../src/entities";
+import {WheelState} from "../src/entities/wheels";
 import {Key} from "../src/libs/Keys";
 import {Process} from "../src/process";
 
@@ -23,14 +24,9 @@ let fn = () => {
     clear();
     ui.resetOutput();
 
-    if (!!player.lastDamagedBy) {
-        player.lastDamagedBy.kill();
-    }
-
     player.fireProof = true;
     player.canBeDamaged = true;
     player.health = 250;
-    ui.div(`${Game.instance.vehicles.length}`);
     ui.div('');
 
     ui.div(game.clock.time, chalk.green(`$${game.money.toString().padStart(8, '0')}`), `${Weather[game.weather]}`);
@@ -41,6 +37,7 @@ let fn = () => {
     ui.div('');
     ui.div(`${player.position.toString()}`);
     ui.div(`Can be damaged: ${player.canBeDamaged}`);
+
 
     if (player.lastDamagedBy) {
         ui.div(`LastDamaged: ${MODEL[player.lastDamagedBy.modelIndex]}`);
@@ -57,17 +54,21 @@ let fn = () => {
         ui.div(` |  Radio: ${RadioStation[car.radioStation]}`);
         ui.div(` |  Type: ${VehicleType[car.type]}`);
         ui.div(` |  Mass: ${car.mass}`);
-        ui.div(` |  WHEEL: ${JSON.stringify(car.wheelStates.json)}`);
+        ui.div(` |  ============================================== `);
+        ui.div(` |  Colors: ${car.colors.primary} | ${car.colors.secondary}`);
+
+        if (Key.tab) {
+            car.health = 1000;
+            car.wheelStates.leftFront = WheelState.NORMAL;
+            car.wheelStates.leftRear = WheelState.NORMAL;
+            car.wheelStates.rightFront = WheelState.NORMAL;
+            car.wheelStates.rightRear = WheelState.NORMAL;
+        }
     }
 
     ui.div('');
     // ui.div(`Sandbox: ${player.nearestPeds.map(p => p.isCrouching)}`);
     ui.div(`Sandbox: ${player.flags1.isCrouching}`);
-
-    for (let p of player.nearestPeds) {
-        p.health = 100;
-        p.armor = 0;
-    }
 
     console.log(ui.toString());
 
@@ -78,6 +79,11 @@ let fn = () => {
 
     if (Key.N3) {
         player.wanted.chaosLevel = 5000;
+    }
+
+    if (Key.tab) {
+        console.log('Processing...');
+        console.log('Complete!');
     }
 
 
