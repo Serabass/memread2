@@ -10,4 +10,5 @@ export enum FunctionAddress {
     UPDATE_WEATHER = 0x57E040,
     GET_PED_BY_INDEX = 0x451CB0,
     CREATE_TAXI_CAB = 0x42B7A0,
+    RELEASE_TAXI_CAB = 0x42B730,
 }

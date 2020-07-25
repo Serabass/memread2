@@ -5,6 +5,10 @@ import {WheelState} from "../src/entities/wheels";
 import {Key} from "../src/libs/Keys";
 import {Process} from "../src/process";
 
+function coin() {
+    return Math.random() >= 0.5;
+}
+
 const INTERVAL = 500;
 
 function clear() {

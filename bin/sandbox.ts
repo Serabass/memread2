@@ -1,11 +1,12 @@
 import {AllocationInfo} from "../src/allocation-info";
 import {Game} from "../src/entities";
+import {TaxiCab} from "../src/entities/taxi-cab";
 import {Injector} from "../src/injector";
 import {Process} from "../src/process";
 
 Process.instance.open();
 
-Game.instance.createCab({
+TaxiCab.create({
     x: -1038.88,
     y: -897.25,
     z: 13.70,
