@@ -20,6 +20,17 @@ export class MemoryArrayPointer {
     }
 }
 
+export class Memory {
+
+    public static of(cls: any) {
+        return new Memory(cls);
+    }
+
+    constructor(public cls: any) {
+
+    }
+}
+
 export class MemoryArray {
 
     public static of(cls: any, count: number, size: number) {

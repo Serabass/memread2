@@ -1,7 +1,7 @@
 import ref from 'ref';
 import {AllocationInfo} from "./allocation-info";
 import {DATATYPE} from "./datatype";
-import {Byte, Float, Int32, Short, UByte} from "./decorators/memory/native-types";
+import {Byte, Float, FString, FStringReversed, Int32, Short, UByte} from "./decorators/memory/native-types";
 import {getProcessId, kernel, ProcessAccessFlags} from "./libs";
 
 /**
@@ -147,13 +147,27 @@ export class Process {
         throw new Error();
     }
 
+    public readFString(address: number, size: number) {
+        let buf = Buffer.alloc(size);
+        kernel.ReadProcessMemory(this.handle, address, buf, size, 0);
+
+        return buf.toString('ascii');
+    }
+
+    public readFStringReversed(address: number, size: number) {
+        let buf = Buffer.alloc(size);
+        kernel.ReadProcessMemory(this.handle, address, buf, size, 0);
+
+        return buf.toString('ascii').split('').reverse().join('');
+    }
+
     public readPointer(address: number, type: DATATYPE) {
         let addr = this.readInt(address);
         console.log(addr);
         return this.read(addr, type);
     }
 
-    public write(address: number, type: DATATYPE, value: any) {
+    public write(address: number, type: DATATYPE, value: any, meta: any = {}) {
         let buffer: Buffer;
 
         switch (type) {
@@ -180,6 +194,13 @@ export class Process {
             case Float:
                 buffer = Buffer.alloc(4);
                 buffer.writeFloatLE(value, 0);
+                break;
+            case FStringReversed:
+                let rev = value.split('').reverse().join('');
+                buffer = Buffer.from(rev as string, 'ascii');
+                break;
+            case FString:
+                buffer = Buffer.from(value as string, 'ascii');
                 break;
             default:
                 return;

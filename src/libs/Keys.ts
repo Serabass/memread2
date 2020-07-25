@@ -285,4 +285,6 @@ export class Key {
     @KeyPressed(Keys.VK_TAB) public static tab: boolean;
     @KeyPressed(Keys.VK_SHIFT) public static shift: boolean;
     @KeyPressed(Keys.VK_CONTROL) public static ctrl: boolean;
+    @KeyPressed(Keys.VK_2) public static N2: boolean;
+    @KeyPressed(Keys.VK_3) public static N3: boolean;
 }

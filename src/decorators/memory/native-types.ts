@@ -15,3 +15,9 @@ export class Short extends Number {
 
 export class Bit extends Boolean {
 }
+
+export class FString extends String {
+}
+
+export class FStringReversed extends String {
+}

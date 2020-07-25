@@ -2,9 +2,9 @@
 // http://www.cyberforum.ru/csharp-beginners/thread1974282.html
 import 'reflect-metadata';
 import {Entity, Weapon} from "../../entities";
-import {MemoryArray, MemoryArrayPointer, MemoryPointer} from '../../pointer';
+import {Memory, MemoryArray, MemoryArrayPointer, MemoryPointer} from '../../pointer';
 import {Process} from "../../process";
-import {Bit, Byte, Float, Int32, Short, UByte} from "./native-types";
+import {Bit, Byte, Float, FString, FStringReversed, Int32, Short, UByte} from "./native-types";
 
 export function MemoryEntity<T extends Entity>(): ClassDecorator {
     return (target: any) => {
@@ -31,6 +31,10 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
                                 case Boolean:
                                 case Short:
                                     return Process.instance.read(address, type);
+                                case FStringReversed:
+                                    return Process.instance.readFStringReversed(address, meta.size);
+                                case FString:
+                                    return Process.instance.readFString(address, meta.size);
 
                                 case Bit:
                                     let val = Process.instance.read(address, Byte) as number;
@@ -78,16 +82,21 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
                                 let baseAddress = this.baseAddress || 0x00;
                                 let pointer = Process.instance.read(baseAddress + offset, Int32);
 
-                                debugger;
-
                                 if (pointer === 0) {
                                     return null;
                                 }
 
                                 return type.cls.at(pointer as any);
                             };
+                        } else if (type instanceof Memory) {
+                            return function(this: any) {
+                                let baseAddress = this.baseAddress || 0x00;
+                                debugger;
+                                return type.cls.at(baseAddress + offset);
+                            };
+                        } else {
+                            debugger;
                         }
-                        debugger;
                 }
             })();
 
@@ -96,7 +105,7 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
                 get,
                 set(value) {
                     let baseAddress = this.baseAddress || 0x00;
-                    Process.instance.write(baseAddress + offset, type, value);
+                    Process.instance.write(baseAddress + offset, type, value, meta);
                 },
             });
         });

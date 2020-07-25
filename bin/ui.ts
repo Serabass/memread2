@@ -1,8 +1,10 @@
 import chalk from 'chalk';
 import cliui from 'cliui';
-import {Game, PedStatus, RadioStation, VehicleType, Weather} from "../src/entities";
+import {Game, MODEL, RadioStation, VehicleType, Weather} from "../src/entities";
 import {Key} from "../src/libs/Keys";
 import {Process} from "../src/process";
+
+const INTERVAL = 500;
 
 function clear() {
     process.stdout.write("\u001b[3J\u001b[2J\u001b[1J");
@@ -17,10 +19,17 @@ game.carDensity = 0.0;
 game.clock.time = '12:00';
 let player = game.player;
 
-setInterval(() => {
+let fn = () => {
     clear();
     ui.resetOutput();
 
+    if (!!player.lastDamagedBy) {
+        player.lastDamagedBy.kill();
+    }
+
+    player.fireProof = true;
+    player.canBeDamaged = true;
+    player.health = 250;
     ui.div(`${Game.instance.vehicles.length}`);
     ui.div('');
 
@@ -28,33 +37,27 @@ setInterval(() => {
     ui.div(`A ${chalk.gray(player.armor.toFixed(2))}`, `H ${chalk.red(player.health.toFixed(2))}`, '');
     ui.div(player.wanted.stars);
     ui.div('');
-    ui.div(` 🔪 : ${player.activeWeaponSlot}`);
-    ui.div('');
-    ui.div(`${PedStatus[player.status]}`);
-    ui.div(`${player.weapons.length}`);
+    ui.div(` 🔪 : ${player.activeWeaponSlot} / ${player.weapons.length}`);
     ui.div('');
     ui.div(`${player.position.toString()}`);
     ui.div(`Can be damaged: ${player.canBeDamaged}`);
 
+    if (player.lastDamagedBy) {
+        ui.div(`LastDamaged: ${MODEL[player.lastDamagedBy.modelIndex]}`);
+    }
 
     if (player.isInVehicle) {
         let car = player.lastControlledVehicle;
-        ui.div(` |  == 🚗 == `);
+        ui.div('');
         ui.div(` |  ${(car.speed as number * 100).toFixed(2)} m/h`, `${car.health.toFixed(2)}`);
+        ui.div(` |  Model: ${(MODEL[car.modelIndex])}`);
         ui.div(` |  Siren: ${(car.siren ? '🗸' : '')}`);
         ui.div(` |  Horn: ${(car.horn ? '🗸' : '')}`);
         ui.div(` |  Accelerator Pedal: ${car.acceleratorPedal}`);
         ui.div(` |  Radio: ${RadioStation[car.radioStation]}`);
         ui.div(` |  Type: ${VehicleType[car.type]}`);
         ui.div(` |  Mass: ${car.mass}`);
-        ui.div(` |  Burnout: ${car.carBurnout}`);
-        ui.div(` |  specialProps: ${car.specialProps.byteValue}`);
-        ui.div(` |  == 🚗 == `);
-        ui.div(' | ');
-
-        if (Key.ctrl) {
-            car.collisionPower++;
-        }
+        ui.div(` |  WHEEL: ${JSON.stringify(car.wheelStates.json)}`);
     }
 
     ui.div('');
@@ -68,15 +71,19 @@ setInterval(() => {
 
     console.log(ui.toString());
 
-    if (Key.tab) {
-        player.canBeDamaged = !player.canBeDamaged;
-        player.fastShoot = !player.fastShoot;
-    }
-
-    if (Key.shift) {
+    if (Key.N2) {
         game.weather = Weather.ExtraSunny;
         game.clock.time = '12:00';
     }
-}, 300);
+
+    if (Key.N3) {
+        player.wanted.chaosLevel = 5000;
+    }
+
+
+    setTimeout(fn, INTERVAL);
+};
+
+setTimeout(fn, INTERVAL);
 
 // Process.instance.close();

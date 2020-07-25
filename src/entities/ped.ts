@@ -170,8 +170,8 @@ export class Vehicle extends Physical {
     @Prop.byte(0x5C5)
     public wheelsOnGround: number;
 
-    @Prop(0x1A4)
-    public alarmDuration: Int32;
+    @Prop.int(0x1A4)
+    public alarmDuration: number;
 
     // @Prop.pedPointer(0x1A8)
     // public readonly driver: Ped;
@@ -206,8 +206,11 @@ export class Vehicle extends Physical {
     @Prop.float(0x204)
     public health: number;
 
-    @Prop(0x2A4, WheelStates)
+    @Prop.mem(0x2A5, WheelStates)
     public wheelStates: WheelStates;
+
+    @Prop.byte(0x2A5)
+    public wheelState1: number;
 
     @Prop.byte(0x29C)
     public type: VehicleType;
@@ -231,28 +234,24 @@ export class Vehicle extends Physical {
     }
 
     public fix() {
-        let inj = new Injector();
-        let alloc = inj.alloc(100)
-            .buf((b) => {
-                // NEED:
-                // mov eax, ds: baseAddress
-                // mov ecx, eax
-                b.writeUint8(0xA1); // mov eax, ds: baseAddress
-                b.writeUint32(this.baseAddress); // mov eax, ds: baseAddress
-
-                b.writeUint8(0x89); // mov ecx, eax
-                b.writeUint8(0xC1); // mov ecx, eax
-            })
+        let inj = new Injector(Process.instance);
+        let alloc = inj.alloc(15)
+            .movDSToEcx(this.baseAddress)
+            // .movEcxEax() // mov ecx, eax
             .relativeCall(FunctionAddress.VEHICLE_FIX)
             .ret();
 
         Process.instance.writeAlloc(alloc);
+
+        debugger;
 
         let aa = Buffer.alloc(5);
         let thread = kernel.CreateRemoteThread(Process.instance.handle, null,
             0, alloc.address, alloc.address, 0, aa);
 
         kernel.WaitForSingleObject(Process.instance.handle, WFSO.WAIT_TIMEOUT);
+
+        alloc.zeroRemote();
 
         return;
     }
@@ -304,6 +303,7 @@ export class Ped extends Physical {
 
     @Prop(0x140) public infiniteRun: boolean;
     @Prop(0x141, Boolean) public fastShoot: boolean;
+    @Prop(0x142, Boolean) public fireProof: boolean;
 
     @Prop(0x150, PedFlags1) public flags1: PedFlags1; // Move to separate class with 0x0 bit offsets
 
@@ -318,6 +318,7 @@ export class Ped extends Physical {
     @Prop.byte(0x598) public lastDamageType: DamageType;
     @Prop(0x52C, Float) public torsoRotation: number;
     @Prop.pointer(0x59C, Ped) public lastDamagedBy: Ped;
+    @Prop.int(0x59C) public lastDamagedBy111: number;
     @Prop(0x63D, Boolean) public canBeDamaged: boolean;
 
     @Prop.pointer(0x3A8, Vehicle)
@@ -387,6 +388,20 @@ export class Player extends Ped {
         return Game.instance.player;
     }
 
+    public static findCoords(): any {
+        let i = new Injector(Process.instance);
+        let resultAlloc = i.alloc(4);
+        let bytes =  i
+            .alloc(100)
+            .relativeCall(FunctionAddress.PLAYER_GET_CAR)
+            .movEcxEax()
+            .movResult(resultAlloc.address)
+            .relativeCall(FunctionAddress.VEHICLE_FIX)
+            .ret();
+
+        debugger;
+    }
+
     @RemoteFunction((i) => {
         let resultAlloc = i.alloc(4);
         return i
@@ -436,12 +451,21 @@ export class Player extends Ped {
     }
 }
 
+export interface IVector3D {
+    x: number;
+    y: number;
+    z: number;
+}
+
 @MemoryEntity()
 export class Game extends GameBase {
     public static singleton: Game;
 
     @Prop.pointer(0x94AD28, Player)
     public player: Player;
+
+    @Prop.fstringReversed(0xA10942, 32)
+    public cheat: string;
 
     @Prop.array(0x0094AD2C, Vehicle)
     public vehicles: Vehicle[];
@@ -527,5 +551,16 @@ export class Game extends GameBase {
 
         let aa = Buffer.alloc(5);
         kernel.CreateRemoteThread(Process.instance.handle, null, 0, alloc.address, alloc.address, 0, aa);
+    }
+
+    public createCab(sourcePos: IVector3D, dropOffPos: IVector3D) {
+        let inj = new Injector(Process.instance);
+
+        let alloc = inj.alloc(100)
+            .ret()
+        ;
+
+        Process.instance.writeAlloc(alloc);
+
     }
 }

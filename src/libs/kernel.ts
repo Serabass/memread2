@@ -141,7 +141,7 @@ export class Kernel {
     @Method()
     @Params('int', 'uint')
     @Ret.int()
-    public WaitForSingleObject: (hProcess, wait) => number;
+    public WaitForSingleObject: (hProcess:number, wait:number) => number;
 }
 
 export function getProcessId(exeName: string) {

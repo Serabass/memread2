@@ -99,7 +99,8 @@ export class AllocationInfo {
     }
 
     public movDSToEcx(address: number) {
-        this.buffer.writeUint8(0x8B)
+        this.buffer
+            .writeUint8(0x8B)
             .writeUint8(0x0D)
             .writeUint32(address)
         ;

@@ -1,4 +1,4 @@
-import {Game} from "../src/entities";
+import {Game, Player, Vehicle} from "../src/entities";
 import {Process} from "../src/process";
 
 function clear() {
@@ -6,3 +6,5 @@ function clear() {
     console.clear();
 }
 Process.instance.open();
+
+console.log(Game.instance.player.lastControlledVehicle.wheelStates.json);

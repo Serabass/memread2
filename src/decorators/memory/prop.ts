@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import {DATATYPE} from '../../datatype';
 import {Ped, Vehicle} from "../../entities";
-import {MemoryArray, MemoryArrayPointer, MemoryPointer} from '../../pointer';
-import {Byte, Float, Int32, Short, UByte, Bit} from "./native-types";
+import {Memory, MemoryArray, MemoryArrayPointer, MemoryPointer} from '../../pointer';
+import {Byte, Float, Int32, Short, UByte, Bit, FString, FStringReversed} from "./native-types";
 
 export function Prop(offset: number, type: DATATYPE = null, meta: any = {}): PropertyDecorator {
     return (target: any, propKey: string | symbol): any => {
@@ -27,11 +27,14 @@ export function Prop(offset: number, type: DATATYPE = null, meta: any = {}): Pro
 Prop.int = (offset: number) => Prop(offset, Int32);
 Prop.float = (offset: number) => Prop(offset, Float);
 Prop.ubyte = (offset: number) => Prop(offset, UByte);
+Prop.fstringReversed = (offset: number, size: number) => Prop(offset, FStringReversed, {size});
+Prop.fstring = (offset: number, size: number) => Prop(offset, FString, {size});
 Prop.bit = (offset: number, bitIndex: number) => Prop(offset, Bit, {bitIndex});
 Prop.byte = (offset: number) => Prop(offset, Byte);
 Prop.short = (offset: number) => Prop(offset, Short);
 Prop.bool = (offset: number) => Prop(offset, Boolean);
 Prop.array = (offset: number, Type: any) => Prop(offset, MemoryArrayPointer.of(Type));
+Prop.mem = (offset: number, Type: any) => Prop(offset, Memory.of(Type));
 Prop.memArray = (offset: number, Type: any, count: number, size: number) => Prop(offset, MemoryArray.of(Type, count, size));
 Prop.pointer = (offset: number, Type: any) => Prop(offset, MemoryPointer.from(Type));
 Prop.pedPointer = (offset: number) => Prop(offset, MemoryPointer.from(Ped));
