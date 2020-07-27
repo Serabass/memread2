@@ -22,5 +22,8 @@ export class Flags extends Number {
 export class FString extends String {
 }
 
+export class NString extends String {
+}
+
 export class FStringReversed extends String {
 }

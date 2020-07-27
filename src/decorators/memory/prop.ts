@@ -2,7 +2,7 @@ import 'reflect-metadata';
 import {DATATYPE} from '../../datatype';
 import {Ped, Vehicle} from "../../entities";
 import {Memory, MemoryArray, MemoryArrayPointer, MemoryPointer} from '../../pointer';
-import {Byte, Float, Int32, Short, UByte, Bit, FString, FStringReversed, Flags} from "./native-types";
+import {Byte, Float, Int32, Short, UByte, Bit, FString, FStringReversed, Flags, NString} from "./native-types";
 
 export function Prop(offset: number, type: DATATYPE = null, meta: any = {}): PropertyDecorator {
     return (target: any, propKey: string | symbol): any => {
@@ -29,6 +29,7 @@ Prop.float = (offset: number) => Prop(offset, Float);
 Prop.ubyte = (offset: number) => Prop(offset, UByte);
 Prop.fstringReversed = (offset: number, size: number) => Prop(offset, FStringReversed, {size});
 Prop.fstring = (offset: number, size: number) => Prop(offset, FString, {size});
+Prop.nstring = (offset: number) => Prop(offset, NString);
 Prop.bit = (offset: number, bitIndex: number) => Prop(offset, Bit, {bitIndex});
 Prop.flags = (offset: number) => Prop(offset, Flags);
 Prop.byte = (offset: number) => Prop(offset, Byte);

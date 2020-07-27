@@ -1,7 +1,11 @@
-import {MemoryEntity} from "../decorators/memory";
+import {MemoryEntity, Prop} from "../decorators/memory";
+import EventEmitter from 'events';
 
 @MemoryEntity()
-export class Entity {
+export class Entity extends EventEmitter {
+    @Prop.short(0x058)
+    public readonly scanCode: number;
+
     public get address() {
         return `0x${this.baseAddress.toString(16)}`;
     }
@@ -11,7 +15,7 @@ export class Entity {
     }
 
     constructor(public baseAddress: number = 0x00) {
-
+        super();
     }
 
     public toString(): string {

@@ -298,7 +298,14 @@ export class PedFlags1 extends Entity {
 }
 
 @MemoryEntity()
+class PedFlags0156 {
+    @Prop.bit(0x00, 0)
+    public isDrowningInWater: boolean;
+}
+
+@MemoryEntity()
 export class Ped extends Physical {
+
     @Prop(0x34, Vector3d)
     public position: Vector3d;
 
@@ -311,11 +318,12 @@ export class Ped extends Physical {
     @Prop.bool(0x142) public fireProof: boolean;
 
     @Prop(0x150, PedFlags1) public flags1: PedFlags1; // Move to separate class with 0x0 bit offsets
+    @Prop(0x156, PedFlags0156) public flags0156: PedFlags0156;
 
     @Prop.bit(0x14D, 5) public runWalkStyle: boolean;
     @Prop.flags(0x053) public flags1111: number;
     @Prop.float(0x354) public health: number;
-    @Prop(0x358) public armor: Float;
+    @Prop.float(0x358) public armor: number;
     @Prop(0x378) public rotation: Float;
     @Prop(0x3AC) public isInVehicle: boolean;
     @Prop(0x504) public activeWeaponSlot: Byte;
@@ -475,6 +483,8 @@ export interface IVector3DA extends IVector3D {
 export class Game extends GameBase {
     public static singleton: Game;
 
+    public interval = 500;
+
     @Prop.pointer(0x94AD28, Player)
     public player: Player;
 
@@ -497,6 +507,9 @@ export class Game extends GameBase {
 
     @Prop(0x936908, Mouse) public mouse: Mouse;
 
+    @Prop.nstring(0x006968D4)
+    public HUMAN_STADIUM_STRING: string;
+
     protected constructor(public baseAddress: number = 0x0) {
         super(baseAddress);
     }
@@ -507,6 +520,17 @@ export class Game extends GameBase {
         }
 
         return this.singleton;
+    }
+
+    private tick() {
+        this.emit('tick');
+        setTimeout(this.tick.bind(this), this.interval);
+    }
+
+    public init() {
+        setTimeout(this.tick.bind(this), this.interval);
+
+        return this;
     }
 
     public helpMessage(text: string) {

@@ -9,8 +9,6 @@ function coin() {
     return Math.random() >= 0.5;
 }
 
-const INTERVAL = 500;
-
 function clear() {
     process.stdout.write("\u001b[3J\u001b[2J\u001b[1J");
     console.clear();
@@ -29,85 +27,78 @@ player.weapons.forEach(w => {
     w.ammo = 100;
 });
 
-let fn = () => {
-    clear();
-    ui.resetOutput();
+Game.instance
+    .init()
+    .on('tick', () => {
+        clear();
+        ui.resetOutput();
 
-    player.fireProof = true;
-    player.infiniteRun = true;
-    player.canBeDamaged = false;
-    player.health = 250;
-    ui.div('');
+        ui.div(`String: ${game.HUMAN_STADIUM_STRING}`);
 
-    ui.div(game.clock.time, chalk.green(`$${game.money.toString().padStart(8, '0')}`), `${Weather[game.weather]}`);
-    ui.div(`A ${chalk.gray(player.armor.toFixed(2))}`, `H ${chalk.red(player.health.toFixed(2))}`, '');
-    ui.div(player.wanted.stars);
-    ui.div('');
-    ui.div(` 🔪 : ${player.activeWeaponSlot} / ${player.weapons.length}`);
-    ui.div('');
-    ui.div(`${player.position.toString()}`);
-    ui.div(`Can be damaged: ${player.canBeDamaged}`);
-    ui.div(`Flags test: ${player.flags1111}`);
+        if (false) {
+            player.fireProof = true;
+            player.infiniteRun = true;
+            player.canBeDamaged = false;
+            player.health = 250;
+            ui.div('');
 
-    if (player.lastDamagedBy) {
-        ui.div(`LastDamaged: ${MODEL[player.lastDamagedBy.modelIndex]}`);
-    }
+            ui.div(game.clock.time, chalk.green(`$${game.money.toString().padStart(8, '0')}`), `${Weather[game.weather]}`);
+            ui.div(`A ${chalk.gray(player.armor.toFixed(2))}`, `H ${chalk.red(player.health.toFixed(2))}`, '');
+            ui.div(player.wanted.stars);
+            ui.div('');
+            ui.div(` 🔪 : ${player.activeWeaponSlot} / ${player.weapons.length}`);
+            ui.div('');
+            ui.div(`${player.position.toString()}`);
+            ui.div(`Can be damaged: ${player.canBeDamaged}`);
+            ui.div(`Flags: ${player.flags0156.isDrowningInWater}`);
 
-    player.weapons.forEach(w => {
-        w.clip = 50;
-    });
+            if (player.lastDamagedBy) {
+                ui.div(`LastDamaged: ${MODEL[player.lastDamagedBy.modelIndex]}`);
+            }
 
-    if (player.isInVehicle) {
-        let car = player.lastControlledVehicle;
-        ui.div('');
-        ui.div(` |  ${(car.speed as number * 100).toFixed(2)} m/h`, `${car.health.toFixed(2)}`);
-        ui.div(` |  Model: ${(MODEL[car.modelIndex])}`);
-        ui.div(` |  Siren: ${(car.siren ? '🗸' : '')}`);
-        ui.div(` |  Horn: ${(car.horn ? '🗸' : '')}`);
-        ui.div(` |  Accelerator Pedal: ${car.acceleratorPedal}`);
-        ui.div(` |  Radio: ${RadioStation[car.radioStation]}`);
-        ui.div(` |  Type: ${VehicleType[car.type]}`);
-        ui.div(` |  Mass: ${car.mass}`);
-        ui.div(` |  ============================================== `);
-        ui.div(` |  Colors: ${car.colors.primary} | ${car.colors.secondary}`);
+            player.weapons.forEach(w => {
+                w.clip = 50;
+            });
+
+            if (player.isInVehicle) {
+                let car = player.lastControlledVehicle;
+                ui.div('');
+                ui.div(` |  ${(car.speed as number * 100).toFixed(2)} m/h`, `${car.health.toFixed(2)}`);
+                ui.div(` |  Model: ${(MODEL[car.modelIndex])}`);
+                ui.div(` |  Siren: ${(car.siren ? '🗸' : '')}`);
+                ui.div(` |  Horn: ${(car.horn ? '🗸' : '')}`);
+                ui.div(` |  Accelerator Pedal: ${car.acceleratorPedal}`);
+                ui.div(` |  Radio: ${RadioStation[car.radioStation]}`);
+                ui.div(` |  Type: ${VehicleType[car.type]}`);
+                ui.div(` |  Mass: ${car.mass}`);
+                ui.div(` |  ============================================== `);
+                ui.div(` |  Colors: ${car.colors.primary} | ${car.colors.secondary}`);
+
+                if (Key.tab) {
+                    car.health = 1000;
+                    car.wheelStates.leftFront = WheelState.NORMAL;
+                    car.wheelStates.leftRear = WheelState.NORMAL;
+                    car.wheelStates.rightFront = WheelState.NORMAL;
+                    car.wheelStates.rightRear = WheelState.NORMAL;
+                }
+            }
+
+            ui.div('');
+            // ui.div(`Sandbox: ${player.nearestPeds.map(p => p.isCrouching)}`);
+            ui.div(`Sandbox: ${player.flags1.isCrouching}`);
+        }
+
+        console.log(ui.toString());
+
+        if (Key.N2) {
+            game.weather = Weather.ExtraSunny;
+            game.clock.time = '12:00';
+        }
 
         if (Key.tab) {
-            car.health = 1000;
-            car.wheelStates.leftFront = WheelState.NORMAL;
-            car.wheelStates.leftRear = WheelState.NORMAL;
-            car.wheelStates.rightFront = WheelState.NORMAL;
-            car.wheelStates.rightRear = WheelState.NORMAL;
+            console.log('Processing...');
+            console.log('Complete!');
         }
-    }
-
-    ui.div('');
-    // ui.div(`Sandbox: ${player.nearestPeds.map(p => p.isCrouching)}`);
-    ui.div(`Sandbox: ${player.flags1.isCrouching}`);
-
-    console.log(ui.toString());
-
-    if (Key.N2) {
-        game.weather = Weather.ExtraSunny;
-        game.clock.time = '12:00';
-    }
-
-    if (Key.N3) {
-        player.wanted.chaosLevel = 5000;
-    }
-
-    if (Key.N4) {
-        player.wanted.chaosLevel = 0;
-    }
-
-    if (Key.tab) {
-        console.log('Processing...');
-        console.log('Complete!');
-    }
-
-
-    setTimeout(fn, INTERVAL);
-};
-
-setTimeout(fn, INTERVAL);
+    });
 
 // Process.instance.close();

@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import {Entity, MODEL, Weapon} from "../../entities";
 import {Memory, MemoryArray, MemoryArrayPointer, MemoryPointer} from '../../pointer';
 import {Process} from "../../process";
-import {Bit, Byte, Flags, Float, FString, FStringReversed, Int32, Short, UByte} from "./native-types";
+import {Bit, Byte, Flags, Float, FString, FStringReversed, Int32, NString, Short, UByte} from "./native-types";
 
 export function MemoryEntity<T extends Entity>(): ClassDecorator {
     return (target: any) => {
@@ -35,6 +35,8 @@ export function MemoryEntity<T extends Entity>(): ClassDecorator {
                                     return Process.instance.readFStringReversed(address, meta.size);
                                 case FString:
                                     return Process.instance.readFString(address, meta.size);
+                                case NString:
+                                    return Process.instance.readNString(address);
                                 case Flags:
                                     return Process.instance.readFlags(address);
 
