@@ -16,6 +16,9 @@ export class Short extends Number {
 export class Bit extends Boolean {
 }
 
+export class Flags extends Number {
+}
+
 export class FString extends String {
 }
 

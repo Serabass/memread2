@@ -307,19 +307,20 @@ export class Ped extends Physical {
     @Prop.int(0x244) public readonly status: PedStatus;
 
     @Prop(0x140) public infiniteRun: boolean;
-    @Prop(0x141, Boolean) public fastShoot: boolean;
-    @Prop(0x142, Boolean) public fireProof: boolean;
+    @Prop.bool(0x141) public fastShoot: boolean;
+    @Prop.bool(0x142) public fireProof: boolean;
 
     @Prop(0x150, PedFlags1) public flags1: PedFlags1; // Move to separate class with 0x0 bit offsets
 
     @Prop.bit(0x14D, 5) public runWalkStyle: boolean;
+    @Prop.flags(0x053) public flags1111: number;
     @Prop.float(0x354) public health: number;
     @Prop(0x358) public armor: Float;
     @Prop(0x378) public rotation: Float;
     @Prop(0x3AC) public isInVehicle: boolean;
     @Prop(0x504) public activeWeaponSlot: Byte;
     @Prop(0x506) public weaponAccuracy: Byte;
-    @Prop(0x596) public money: Int32;
+    @Prop.float(0x596) public money: number;
     @Prop.byte(0x598) public lastDamageType: DamageType;
     @Prop(0x52C, Float) public torsoRotation: number;
     @Prop.pointer(0x59C, Ped) public lastDamagedBy: Ped;

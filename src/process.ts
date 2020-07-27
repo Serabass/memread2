@@ -154,6 +154,13 @@ export class Process {
         return buf.toString('ascii');
     }
 
+    public readFlags(address: number) {
+        let buf = Buffer.alloc(1);
+        kernel.ReadProcessMemory(this.handle, address, buf, 1, 0);
+
+        return buf[0].toString(2).padStart(8, '0');
+    }
+
     public readFStringReversed(address: number, size: number) {
         let buf = Buffer.alloc(size);
         kernel.ReadProcessMemory(this.handle, address, buf, size, 0);

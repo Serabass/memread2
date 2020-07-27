@@ -24,12 +24,18 @@ game.carDensity = 0.0;
 game.clock.time = '12:00';
 let player = game.player;
 
+player.weapons.forEach(w => {
+    w.clip = 10;
+    w.ammo = 100;
+});
+
 let fn = () => {
     clear();
     ui.resetOutput();
 
     player.fireProof = true;
-    player.canBeDamaged = true;
+    player.infiniteRun = true;
+    player.canBeDamaged = false;
     player.health = 250;
     ui.div('');
 
@@ -41,11 +47,15 @@ let fn = () => {
     ui.div('');
     ui.div(`${player.position.toString()}`);
     ui.div(`Can be damaged: ${player.canBeDamaged}`);
-
+    ui.div(`Flags test: ${player.flags1111}`);
 
     if (player.lastDamagedBy) {
         ui.div(`LastDamaged: ${MODEL[player.lastDamagedBy.modelIndex]}`);
     }
+
+    player.weapons.forEach(w => {
+        w.clip = 50;
+    });
 
     if (player.isInVehicle) {
         let car = player.lastControlledVehicle;
@@ -83,6 +93,10 @@ let fn = () => {
 
     if (Key.N3) {
         player.wanted.chaosLevel = 5000;
+    }
+
+    if (Key.N4) {
+        player.wanted.chaosLevel = 0;
     }
 
     if (Key.tab) {
