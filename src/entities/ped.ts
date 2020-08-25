@@ -356,6 +356,10 @@ export class Ped extends Physical {
     @Prop(0x638, Drunkenness)
     public drunkenness: Drunkenness;
 
+    public get activeWeapon() {
+        return this.weapons[this.activeWeaponSlot as any];
+    }
+
     public static byIndex(index: number) {
 
     }
@@ -406,7 +410,7 @@ export class Player extends Ped {
         return Game.instance.player;
     }
 
-    public static findCoords(): any {
+    public static fixCar(): any {
         let i = new Injector(Process.instance);
         let resultAlloc = i.alloc(4);
         let bytes = i
